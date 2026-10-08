@@ -1,0 +1,35 @@
+# Zenodo metadata for the archived bundles of a corpus version (`run/store.py zenodo`).
+# The tool creates a draft with this metadata (version = the corpus tag); review the
+# draft in the Zenodo web interface and publish it there.
+
+title: OntoMeter ontology corpus
+upload_type: dataset
+access_right: open
+# Each file keeps its own licence; the bundles hold only files whose licence allows
+# redistribution (see redistribution.yaml and the licence report in the record).
+license: other-open
+description: >-
+  Ontology files collected from public ontology registries, kept byte for byte and named
+  by the SHA-256 of their content. The record holds solid tar.zst bundles of the files whose
+  declared licence allows redistribution, their SHA-256 lists, the object index of the
+  corpus version and the per-file licence report. Withheld files are listed in the report
+  with their source URL.
+creators:
+  - name: Belikov, Alexander
+    affiliation: GrowGraph
+  - name: Bareham, David
+    affiliation: University of Liverpool
+keywords:
+  - ontology
+  - RDF
+  - OWL
+  - SKOS
+  - semantic web
+  - corpus
+related_identifiers:
+  - identifier: https://huggingface.co/datasets/growgraph/ontometer-corpus
+    relation: isIdenticalTo
+    resource_type: dataset
+  - identifier: https://github.com/growgraph/OntoMeter
+    relation: isSupplementedBy
+    resource_type: software

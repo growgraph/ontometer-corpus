@@ -1,0 +1,36 @@
+# Which objects the public copy of the object store may include
+# (`run/store.py licenses`, `run/store.py publish`).
+#
+# Licence ids come from ontometer.corpus.store.licence.normalise_licence; the
+# lists hold glob patterns. An object is withheld if any of its recognised
+# licences matches `withhold`, published if one matches `redistribute`, and
+# otherwise decided by `unrecognised` (licences outside both lists, including
+# bare copyright statements) or `default` (no licence declared at all).
+# Withheld objects stay listed in the public index with their source URL.
+
+default: withhold
+unrecognised: withhold
+
+redistribute:
+  - CC0-*
+  - PDDL-*
+  - public-domain
+  - CC-BY*
+  - ODC-By-*
+  - ODbL-*
+  - MIT
+  - Apache-2.0
+  - BSD-*
+  - GPL-*
+  - LGPL*
+  - Artistic-2.0
+  - W3C
+  - OGL-UK-*
+  - ISA-OML-*
+  - etalab-*
+  - EUPL-*
+
+# Non-commercial and no-derivatives licences: withheld until decided.
+withhold:
+  - CC-BY-NC*
+  - CC-BY-ND*
