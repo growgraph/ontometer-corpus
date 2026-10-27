@@ -84,6 +84,7 @@ G = load_network("ontometer-corpus/data")  # networkx.MultiDiGraph
 | `ontology_metrics.parquet` | ontology | One wide table joining the above: counts, hierarchy shape, coupling, OQuaRE (`oq_*`) and position in the reuse network (degrees, PageRank, betweenness, IDF-weighted reuse). Indexed by network `node` |
 | `ontology_abstractness.parquet` | ontology (release family) | Term-based abstractness: `A_local`, `A_global`, `A_class`; dependency metrics `Ca`, `Ce`, `I`, `D`; `layer`, reuse `community`; population flags `subject`, `kb_like`, `flat`. Index `onto` (0..n-1) |
 | `ontology_specialisations.parquet` | (child, parent) ontology pair | The **specialisation network**: the child asserts one of its classes under a class of the parent; `n_terms` such assertions; `panel_first`, the first release that asserts it where known |
+| `concept_redeclarations.parquet` | normalised class label | Labels declared as an own class in at least three home ontologies: `n_homes`, `n_terms`, and `cover`, the largest share of those declarations one common ancestor unites (copied edges left out), with that `best_common_ancestor` and `example_iris`. Matching is lexical |
 | `abstractness_panel.parquet` | release | Abstractness per release, for families with several dated releases, and how the hierarchy changed from the previous release |
 | `ontology_dates.parquet` | release family | First-evidence birth date: from the registry, the web archive or Wikidata (`birth_source`), and `as_of`, the capture date |
 | `abstractness_growth.parquet` | ontology | Birth, first specialisation and dependency counts under two dating rules (`*_bounded`, `*_first_evidence`) |
@@ -305,7 +306,7 @@ exactly what was captured, and when.
 A corpus version is a commit of this repository; releases are tags (`git tag`). Name the
 commit or tag when you report results, and the OntoMeter version that read it.
 
-Authors: Alexander Belikov (GrowGraph) and David Bareham (University of Liverpool).
+Authors: Alexander Belikov (GrowGraph) and David Bareham (CESDIP, CY Cergy Paris Université).
 
 The tables are released under Apache-2.0 (see [LICENSE](LICENSE)). The ontology files they
 describe are not included and keep their own licences.
