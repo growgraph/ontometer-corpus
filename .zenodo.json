@@ -1,0 +1,27 @@
+{
+  "upload_type": "dataset",
+  "title": "OntoMeter Corpus: a multi-registry snapshot of the ontology ecosystem",
+  "description": "Ontologies collected from ten public registries, parsed and deduplicated across registries and releases, with three networks between them (namespaces, class subsumption, specialisation), first-evidence dates and per-ontology metrics.",
+  "creators": [
+    {
+      "name": "Belikov, Alexander",
+      "affiliation": "GrowGraph",
+      "orcid": "0000-0002-5649-0913"
+    },
+    {
+      "name": "Bareham, David",
+      "affiliation": "CESDIP, CY Cergy Paris Université",
+      "orcid": "0009-0000-7542-8966"
+    }
+  ],
+  "license": "cc-by-4.0",
+  "access_right": "open",
+  "keywords": ["ontology", "ontology reuse", "semantic web", "corpus", "RDF", "OWL"],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/growgraph/OntoMeter",
+      "relation": "isDerivedFrom",
+      "resource_type": "software"
+    }
+  ]
+}

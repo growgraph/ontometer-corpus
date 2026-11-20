@@ -15,6 +15,14 @@ authors:
     given-names: David
     affiliation: "CESDIP, CY Cergy Paris Université"
     orcid: "https://orcid.org/0009-0000-7542-8966"
+doi: 10.5281/zenodo.24404202
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.24404202
+    description: All versions; resolves to the latest release.
+  - type: doi
+    value: 10.5281/zenodo.24404203
+    description: The corpus-2026-08 release.
 repository: "https://github.com/growgraph/ontometer-corpus"
 license: CC-BY-4.0
 version: corpus-2026-08

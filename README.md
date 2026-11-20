@@ -303,7 +303,10 @@ exactly what was captured, and when.
 
 ## Versions, citing, licence
 
-A corpus version is a commit of this repository; releases are tags (`git tag`). Name the
+A corpus version is a commit of this repository; releases are tags (`git tag`), archived on
+Zenodo: [10.5281/zenodo.24404202](https://doi.org/10.5281/zenodo.24404202) resolves to the
+latest release, and each release has its own DOI (`corpus-2026-08`:
+[10.5281/zenodo.24404203](https://doi.org/10.5281/zenodo.24404203)). Name the
 commit or tag when you report results, and the OntoMeter version that read it.
 
 Authors: Alexander Belikov (GrowGraph) and David Bareham (CESDIP, CY Cergy Paris Université).
