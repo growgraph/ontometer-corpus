@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use these tables, please cite them as below and name the commit or tag you used."
+title: "OntoMeter Corpus: a multi-registry snapshot of the ontology ecosystem"
+abstract: >-
+  Ontologies collected from ten public registries, parsed and deduplicated across
+  registries and releases, with three networks between them (namespaces, class
+  subsumption, specialisation), first-evidence dates and per-ontology metrics.
+type: dataset
+authors:
+  - family-names: Belikov
+    given-names: Alexander
+    affiliation: GrowGraph
+    orcid: "https://orcid.org/0000-0002-5649-0913"
+  - family-names: Bareham
+    given-names: David
+    affiliation: "CESDIP, CY Cergy Paris Université"
+    orcid: "https://orcid.org/0009-0000-7542-8966"
+repository: "https://github.com/growgraph/ontometer-corpus"
+license: CC-BY-4.0
+keywords:
+  - ontology
+  - ontology reuse
+  - semantic web
+  - corpus
+  - RDF
+  - OWL

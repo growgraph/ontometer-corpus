@@ -5,8 +5,9 @@
 title: OntoMeter ontology corpus
 upload_type: dataset
 access_right: open
-# Each file keeps its own licence; the bundles hold only files whose licence allows
-# redistribution (see redistribution.yaml and the licence report in the record).
+# This record holds raw ontology files, and each keeps its own licence; the bundles hold only
+# files whose licence allows redistribution (see redistribution.yaml and the licence report in
+# the record). The tables of this repository are CC BY 4.0 (LICENSE at the repository root).
 license: other-open
 description: >-
   Ontology files collected from public ontology registries, kept byte for byte and named

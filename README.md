@@ -308,5 +308,34 @@ commit or tag when you report results, and the OntoMeter version that read it.
 
 Authors: Alexander Belikov (GrowGraph) and David Bareham (CESDIP, CY Cergy Paris Université).
 
-The tables are released under Apache-2.0 (see [LICENSE](LICENSE)). The ontology files they
-describe are not included and keep their own licences.
+### Licence
+
+The tables in `data/` are © 2025–2026 Alexander Belikov and David Bareham, released under the
+[Creative Commons Attribution 4.0 International licence](LICENSE) (CC BY 4.0). You may share
+and adapt them for any purpose if you credit the corpus: cite it as in
+[CITATION.cff](CITATION.cff) and name the commit or tag you used.
+
+**Registry metadata.** `manifest.jsonl` and `corpus.db` (`source_registry_metadata`) also carry
+text the registries publish about each ontology: names, acronyms, descriptions, notes and
+titles. That text keeps its registry's terms, so credit the registry when you reuse it:
+
+| Registry | Terms for its metadata |
+|---|---|
+| OBO Foundry, OKG | CC0 (OKG's text comes from Wikidata; its `category` is OKG's own, Apache-2.0) |
+| LOV | CC BY 4.0 |
+| AgroPortal, TechnoPortal, OntoPortal-Astro | an open licence the portals call equivalent to CC BY |
+| BioPortal | use allowed with credit to the original provider |
+| BiodivPortal, MatPortal | no terms stated |
+| Ontohub, LOD Cloud | only URLs are kept |
+
+Links to each registry's terms and the citation it asks for are in
+[`data/redistribution.yaml`](data/redistribution.yaml) under `registry_metadata`.
+
+The ontology files the tables describe are not included here and keep their own licences (see
+[The raw files](#the-raw-files)). The code that builds the tables,
+[OntoMeter](https://github.com/growgraph/OntoMeter), is Apache-2.0.
+
+### Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Contributions are accepted under the
+[Growgraph Contributor License Agreement](CLA.md).

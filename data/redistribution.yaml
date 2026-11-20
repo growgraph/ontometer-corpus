@@ -34,3 +34,59 @@ redistribute:
 withhold:
   - CC-BY-NC*
   - CC-BY-ND*
+
+# The registry metadata text the tables carry (manifest.jsonl and corpus.db, column
+# source_registry_metadata: names, acronyms, descriptions, notes, titles), and the terms each
+# registry states for it. Checked 2026-11-20. Not read by the tools; the verdicts here decide
+# what the tables may carry under CC BY 4.0.
+#   verdict: cc-by        the registry's terms allow reuse under CC BY 4.0 with attribution
+#            cc0          no conditions
+#            credit-only  use allowed with credit, redistribution not stated explicitly
+#            none-found   the registry states no terms for its metadata
+#            urls-only    the tables keep only URLs from this registry
+registry_metadata:
+  BioPortal:
+    verdict: credit-only
+    terms: https://www.bioontology.org/terms/
+    note: metadata "may be downloaded in whole or in part and used", crediting the original provider
+    cite: Whetzel et al., Nucleic Acids Res. 39:W541-5 (2011)
+  AgroPortal:
+    verdict: cc-by
+    terms: https://wiki.agroportal.eu/s/41afc04a-50ac-4572-9fcd-398e954e3bf0
+    note: catalogue metadata under an "Open License (equivalent to CC-BY)", unversioned
+    cite: https://doi.org/10.1016/j.compag.2017.10.012
+  TechnoPortal:
+    verdict: cc-by
+    terms: https://technoportal.github.io/
+    note: catalogue metadata under an "Open License (equivalent to CC-BY)", unversioned
+  OntoPortal-Astro:
+    verdict: cc-by
+    terms: https://ontoportal-astro.eu/pages/TermsAndConditions.html
+    note: catalogue metadata under an "Open License (equivalent to CC-BY)", unversioned
+    cite: https://doi.org/10.1016/j.ascom.2025.100991
+  BiodivPortal:
+    verdict: none-found
+    terms: null
+    note: no terms page; to be asked of the operator
+    cite: https://doi.org/10.1007/s13222-024-00474-5
+  MatPortal:
+    verdict: none-found
+    terms: null
+    note: no terms page; BioPortal's terms cover only sites Stanford BMIR operates
+  OBO:
+    verdict: cc0
+    terms: https://github.com/OBOFoundry/OBOFoundry.github.io/blob/master/LICENSE.md
+  LOV:
+    verdict: cc-by
+    terms: https://lov.linkeddata.es/dataset/about
+    cite: Vandenbussche et al., Semantic Web 8(3) (2017)
+  OKG:
+    verdict: cc0
+    terms: https://github.com/SteveHedden/open-knowledge-graphs
+    note: title, description, homepage and wikidataId come from Wikidata (CC0); category is OKG's curation, under the repository's Apache-2.0
+  Ontohub:
+    verdict: urls-only
+    terms: null
+  LODCloud:
+    verdict: urls-only
+    terms: null
