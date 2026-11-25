@@ -26,7 +26,7 @@ identifiers:
 repository: "https://github.com/growgraph/ontometer-corpus"
 license: CC-BY-4.0
 version: corpus-2026-08.1
-date-released: "2026-11-20"
+date-released: "2026-11-25"
 keywords:
   - ontology
   - ontology reuse
