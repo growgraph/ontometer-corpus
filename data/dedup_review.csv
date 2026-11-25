@@ -1,0 +1,219 @@
+kind,a,b,verdict,note
+merge,obo:miapa,okg:Q81661690,same,
+merge,obo:zfa,okg:Q81661847,same,the linked stages file holds the anatomy terms
+merge,agroportal:CO_324::61,agroportal:CO_322::63,same,both files hold the same crop terms
+merge,agroportal:CO_327::9,agroportal:CO_322::63,distinct,an earlier Pearl Millet submission carries the file of another crop ontology
+merge,agroportal:CO_335::57,agroportal:CO_322::63,same,the kept file holds these terms under another registry entry
+merge,agroportal:SPO-FDM::2,lov:http://kmi.open.ac.uk/projects/smartproducts/ontologies/food.owl::v2015-01-11,same,
+merge,agroportal:SSN::2,lov:http://www.w3.org/ns/ssn/::v2017-04-17,same,
+merge,ontohub:automation-i4-0-ontology/Automation-I4.0-Min-Ontology - Application.owl,ontohub:automation-i4-0-ontology/Automation-I4.0-Min-Ontology.rdf,part,module of the kept ontology
+merge,ontohub:automation-i4-0-ontology/Automation-I4.0-Min-Ontology - CodeGeneration.owl,ontohub:automation-i4-0-ontology/Automation-I4.0-Min-Ontology.rdf,part,module of the kept ontology
+merge,ontohub:automation-i4-0-ontology/sto.ttl,ontohub:automation-i4-0-ontology/sto-rdf.rdf,same,
+merge,ontohub:bioportal/BP.owl,lov:http://www.biopax.org/release/biopax-level3.owl::v1.0,same,
+merge,ontohub:bioportal/BT.owl,lov:http://purl.org/biotop/biotop.owl::v2012-04-24,same,
+merge,ontohub:bioportal/CMPO.owl,okg:Q55118288,same,
+merge,ontohub:bioportal/CPTH.ttl,ontoportalastro:STY::6,same,the file declares only the UMLS semantic types
+merge,ontohub:bioportal/DIDEO.owl,okg:Q81661586,same,
+merge,ontohub:bioportal/GO-PLUS.owl,agroportal:GO::233,same,
+merge,ontohub:bioportal/IAO.owl,okg:Q55118415,same,
+merge,ontohub:bioportal/NONRCTO.owl,ontohub:bioportal/RCTONT.owl,distinct,sibling ontology built on the same template
+merge,ontohub:bioportal/OBCS.owl,okg:Q55118544,same,
+merge,ontohub:bioportal/OBI.owl,okg:Q7095051,same,
+merge,ontohub:bioportal/OBIB.owl,okg:Q55118499,same,
+merge,ontohub:bioportal/VIVO-ISF.owl,lov:http://vivoweb.org/ontology/core::v1.6,same,
+merge,ontohub:bioportal/VO.owl,okg:Q55118646,same,
+merge,ontohub:cadence/perfect7_ontology2.owl,ontohub:cadence/genericALL1.owl,part,variant of one modelling exercise
+merge,ontohub:cadence/phrygOntology2.owl,ontohub:cadence/genericALL1.owl,part,variant of one modelling exercise
+merge,ontohub:iswc2014/SO.owl,okg:Q81661803,same,
+merge,ontohub:iswc2014/ZFA.owl,okg:Q81661847,same,
+merge,ontohub:linkedun/dynamic.owl,ontohub:linkedun/ABOX.owl,same,
+merge,ontohub:mereotopology/import8into13.owl,ontohub:mereotopology/8with13.owl,part,test file combining two modules
+merge,ontohub:mie1510_liutuocheng/SSN.owl,lov:http://www.w3.org/ns/ssn/::v2017-04-17,same,"earlier SSN, held as an old release of the LOV entry"
+merge,ontohub:perfectcadence7/perf7ontology1.owl,ontohub:cadence/genericALL1.owl,part,variant of one modelling exercise
+merge,ontohub:socop/AG.owl,lov:http://data.ordnancesurvey.co.uk/ontology/geometry/::v2012-10-08,same,
+merge,ontohub:socop/NeoGeo-Geometry.owl,lov:http://geovocab.org/geometry::v2012-02-05,same,
+merge,ontohub:socop/NeoGeo-Spatial.owl,lov:http://geovocab.org/spatial::v2012-02-05,same,
+merge,ontohub:socop/SIIO.owl,agroportal:SIO::5,same,
+merge,ontohub:socop/SR.owl,lov:http://data.ordnancesurvey.co.uk/ontology/spatialrelations/::v2013-09-04,same,
+merge,ontohub:socop/SSN.owl,lov:http://www.w3.org/ns/ssn/::v2017-04-17,same,"earlier SSN, held as an old release of the LOV entry"
+merge,ontohub:socop/UKAG.owl,lov:http://data.ordnancesurvey.co.uk/ontology/admingeo/::v2013-09-04,same,
+merge,ontohub:socop/UKPC.owl,lov:http://data.ordnancesurvey.co.uk/ontology/postcode/::v2013-09-04,same,
+merge,ontohub:socop/wgs84_pos.owl,lov:http://www.w3.org/2003/01/geo/wgs84_pos::v1.22,same,
+merge,ontohub:testejaqueline/OWLRenaultRevisadaV29.owl,ontohub:testejaqueline/teste.owl,same,
+merge,ontohub:tqc-competency-questions/bfo.owl,okg:Q4866972,same,
+merge,ontohub:uniprov/prov-o.owl.rdf,biodivportal:PROV-O::1,same,
+merge,bp:SSN::2,lov:http://www.w3.org/ns/ssn/::v2017-04-17,same,
+merge,bp:STY1::1,ontoportalastro:STY::6,same,
+merge,bp:OFDSIPT::1,bp:FL8DSIP::2,same,
+merge,ontoportalastro:MESSENGERS::1,lov:http://www.ivoa.net/rdf/messenger::v2023-05-09,same,
+merge,okg:Q139378266,lov:http://www.w3.org/2003/01/geo/wgs84_pos::v1.22,same,
+merge,okg:Q574326,lov:http://purl.org/ontology/bibo/::v1.3,same,
+merge,okg:Q120549459,lov:http://purl.org/vocab/bio/0.1/::v2011-06-14,same,
+merge,okg:Q29862575,lov:http://www.w3.org/ns/org#::v0.8,same,
+merge,okg:Q5183502,lov:http://creativecommons.org/ns::v2008-03-03,same,
+merge,okg:Q16892890,lov:http://www.w3.org/ns/dcat::v2020.0204,same,
+merge,okg:Q5205836,lov:http://usefulinc.com/ns/doap#::v2012-01-04,same,
+merge,okg:Q624610,lov:http://purl.org/dc/elements/1.1/::v2012-06-14,same,
+merge,okg:Q117356000,agroportal:EDAM::17,same,
+merge,okg:Q1389366,bp:FOAF::1,same,
+merge,okg:Q55118395,agroportal:FOODON::117,same,an earlier FoodOn release
+merge,okg:Q27303896,bp:DCT::1,same,the registry links the DC Terms file
+merge,okg:Q39053847,lov:http://purl.org/goodrelations/v1::v2011-10-01,same,
+merge,okg:Q55118406,biodivportal:SWO::2,same,the registry links an SWO file
+merge,okg:Q134408999,lov:http://www.w3.org/ns/lemon/decomp::v1.1,same,
+merge,okg:Q138041106,lov:http://lexvo.org/ontology::v0.23,same,
+merge,okg:Q60675027,lov:http://purl.oclc.org/NET/ssnx/qu/qu::v2011-06-20,same,
+merge,okg:Q139378264,lov:http://www.w3.org/ns/ldp#::v20150226,same,
+merge,okg:Q55118456,okg:Q4866972,same,the registry links a BFO file
+merge,okg:Q96397500,lov:http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl::v1.1,same,the registry links a design-pattern file
+merge,okg:Q81661750,okg:Q55118538,same,
+merge,okg:Q97574552,lov:http://www.w3.org/ns/person::v2014-06-19,same,
+merge,okg:Q139378214,lov:http://www.w3.org/2007/05/powder-s::v2010-11-08,same,
+merge,okg:Q25917172,lov:http://qudt.org/schema/qudt::v2.1.2,same,
+merge,okg:Q109734057,lov:http://www.w3.org/ns/r2rml#::v2012-07-16,same,
+merge,okg:Q1751819,lov:http://www.w3.org/2000/01/rdf-schema#::W3C Recommendation v1.1,same,
+merge,okg:Q29377821,lov:http://www.w3.org/ns/shacl#::v2017-07-20,same,
+merge,okg:Q2288360,lov:http://www.w3.org/2004/02/skos/core::W3C Recommendation,same,
+merge,okg:Q55118617,ontohub:bioportal/SP.owl,same,
+merge,okg:Q62212264,lov:http://purl.org/linked-data/cube::v2014-07-31,same,
+merge,okg:Q109499536,lov:http://purl.org/ontology/mo/::v2.15,same,
+merge,okg:Q120500594,lov:http://purl.org/vocab/vann/::v2010-06-07,same,
+merge,okg:Q139378265,lov:http://www.w3.org/2006/vcard/ns::v2014-05-22,same,
+merge,okg:Q111110073,lov:http://vocab.org/whisky/terms::v2008-09-25,same,
+merge,okg:Q115686989,lov:http://wikiba.se/ontology::v1.0,same,
+merge,lov:http://purl.org/spar/datacite::v1.2,bp:DATACITE::3,same,
+merge,lov:http://purl.org/dc/terms/::v2012-06-14,bp:DCT::1,same,
+merge,lov:http://www.geonames.org/ontology::v3.1,biodivportal:GEONAMES::1,same,
+merge,lov:http://purl.obolibrary.org/obo/obi.owl::v2019.0806,okg:Q7095051,same,
+merge,lov:http://semweb.mmlab.be/ns/odapps::v1.1,lov:http://semweb.mmlab.be/ns/oh::v2015.0522,distinct,one release of oh is the odapps file
+merge,lov:http://www.ontology-of-units-of-measure.org/resource/om-2/::v2.0.22,bp:OM::33,same,
+merge,lov:http://schema.org/::v7.0,biodivportal:SCHEMAORG::1,same,
+merge,lov:http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine::v2003-12-09,agroportal:WINE::3,same,
+candidate,obo:bto,lov:https://w3id.org/bot::v0.3.2,distinct,acronym or IRI collision
+candidate,obo:cmo,lov:http://purl.org/twc/ontologies/cmo.owl::v2006,distinct,acronym or IRI collision
+candidate,obo:cteno,okg:Q81661576,part,module
+candidate,obo:dpo,lov:http://purl.org/twc/dpo/ont/diabetes_pharmacology_ontology.ttl::v2022.1218,distinct,acronym or IRI collision
+candidate,obo:epio,okg:Q113012657,same,renamed terms
+candidate,obo:fbdv,okg:Q81661623,distinct,the registry links another ontology's file
+candidate,obo:fovt,okg:Q113012661,distinct,the registry links an import file
+candidate,obo:geo,okg:Q81661641,part,module
+candidate,obo:geo,lov:http://www.w3.org/2003/01/geo/wgs84_pos::v1.22,distinct,acronym or IRI collision
+candidate,obo:ma,ontohub:fois2016/MA.owl,same,older copy under another IRI
+candidate,obo:ma,okg:Q81661674,distinct,the registry links another ontology's file
+candidate,obo:mf,okg:Q55118443,distinct,acronym or IRI collision
+candidate,obo:mod,lov:http://www.isibang.ac.in/ns/mod::v1.4,distinct,acronym or IRI collision
+candidate,obo:mondo,okg:Q27468140,distinct,the registry links no ontology file
+candidate,obo:ncbitaxon,bp:NCBITAXON::27,same,two IRI schemes for one taxonomy
+candidate,obo:ncit,ontohub:bioportal/NCIT.ttl,same,NCIt and its OBO edition
+candidate,obo:ncit,ontohub:iswc2014/NCIT.owl,same,NCIt and its OBO edition
+candidate,obo:ncit,okg:Q113012671,part,two-term stub
+candidate,obo:oarcs,okg:Q81661727,same,older release
+candidate,obo:omit,ontohub:bioportal/OMIT.owl,same,older release under other IRIs
+candidate,obo:pcl,okg:Q81661775,distinct,the registry links another ontology's file
+candidate,obo:stato,okg:Q83428681,same,older release
+candidate,obo:tto,matportal:TTO::2,distinct,acronym or IRI collision
+candidate,obo:uberon,ontohub:bioportal/UBERON.owl,same,older copy
+candidate,obo:uberon,ontohub:fois2016/UBERON.owl,same,older copy
+candidate,obo:upheno,okg:Q81661827,part,module
+candidate,obo:vto,matportal:VTO::2,distinct,acronym or IRI collision
+candidate,obo:zp,okg:Q81661852,distinct,the registry links another ontology's file
+candidate,obo:micro,okg:Q81661692,part,import module
+candidate,obo:pdumdv,okg:Q81661775,part,the other file contains it
+candidate,biodivportal:IOC::1,lov:http://w3id.org/ioc::v0.5,distinct,acronym or IRI collision
+candidate,biodivportal:QUDT::1,lov:http://qudt.org/schema/qudt::v2.1.2,same,older release
+candidate,biodivportal:TOP::1,agroportal:TOP::1,same,two releases of one thesaurus
+candidate,biodivportal:UNESCOTHES::14,okg:Q2467479,same,"one thesaurus, no IRI"
+candidate,biodivportal:COB::5,okg:Q113006456,distinct,the registry links no ontology file
+candidate,agroportal:AEO::1,bp:AEO::8,distinct,acronym or IRI collision
+candidate,agroportal:AGROVOC::61,agroportal:AGRONTOLOGY::6,distinct,thesauri sharing a schema
+candidate,agroportal:AGROVOC::61,agroportal:ASFA::1,distinct,thesauri sharing a schema
+candidate,agroportal:EFO::96,ontohub:iswc2014/EFO.owl,same,older copy
+candidate,agroportal:EOL::248,ontohub:bioportal/EOL.owl,same,older release under other IRIs
+candidate,agroportal:OFSMR::1,ontohub:bioportal/OFSMR.owl,same,older release under other IRIs
+candidate,agroportal:PO2::4,agroportal:TRANSFORMON::2,distinct,acronym or IRI collision
+candidate,agroportal:PR::10,lov:http://purl.org/ontology/prv/core#::v0.11,distinct,acronym or IRI collision
+candidate,agroportal:AGRONTOLOGY::6,agroportal:ASFA::1,distinct,thesauri sharing a schema
+candidate,agroportal:ATC::1,ontohub:bioportal/ATC.ttl,distinct,acronym or IRI collision
+candidate,agroportal:BCO::2,okg:Q55118250,part,sample module
+candidate,agroportal:CL::67,lov:http://advene.org/ns/cinelab/ld::v2015-03-29,distinct,acronym or IRI collision
+candidate,agroportal:EPPO::1,bp:E-PPO::1,distinct,acronym or IRI collision
+candidate,agroportal:OM::1,bp:OM::33,same,OM 1 and OM 2
+candidate,agroportal:OM::1,lov:http://def.seegrid.csiro.au/isotc211/iso19156/2011/observation::2013-11-14,distinct,acronym or IRI collision
+candidate,agroportal:ONS::1,okg:Q113014431,same,copy with imports
+candidate,agroportal:PBO::4,lov:http://purl.org/ontology/pbo/core#::v0.6,distinct,acronym or IRI collision
+candidate,agroportal:PECO::9,lov:https://w3id.org/peco::v2023-05-08,distinct,acronym or IRI collision
+candidate,agroportal:SAREF::5,agroportal:SAREF4ECHONET::1,part,extension
+candidate,agroportal:SPTO::3,agroportal:USE::3,distinct,acronym or IRI collision
+candidate,agroportal:TAXREF-LD::6,lov:http://taxref.mnhn.fr/lod/taxref-ld::v15.2,part,schema of the data set
+candidate,ontohub:automation-i4-0-ontology/Automation-I4.0-Min-Ontology.rdf,ontohub:automation-i4-0-ontology/Automation-I4.0-Ontology.owl,part,module
+candidate,ontohub:automation-i4-0-ontology/ddo.owl,ontohub:bioportal/DDO.owl,distinct,acronym or IRI collision
+candidate,ontohub:automation-i4-0-ontology/sto-owl.owl,ontohub:automation-i4-0-ontology/sto-rdf.rdf,same,two serialisations
+candidate,ontohub:automation-i4-0-ontology/sto-owl.owl,lov:https://w3id.org/i40/sto#::v2.0,same,two releases
+candidate,ontohub:automation-i4-0-ontology/sto-rdf.rdf,lov:https://w3id.org/i40/sto#::v2.0,same,two releases
+candidate,ontohub:bioportal/AERO.owl,okg:Q55118235,part,module
+candidate,ontohub:bioportal/BHO.owl,ontohub:bioportal/GBM.owl,distinct,sibling ontology built on the same template
+candidate,ontohub:bioportal/CBO.owl,lov:http://comicmeta.org/cbo/::v0.13.2,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/CCO.owl,matportal:CCO::2,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/CCO.owl,lov:http://purl.org/ontology/cco/core#::v0.2,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/CHEBI.owl,bp:CHEBI::219,same,older copy
+candidate,ontohub:bioportal/CTO.owl,lov:https://w3id.org/cto::v2021-02-26,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/DCO.rdf,lov:https://w3id.org/dco::v1.0,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/DERMLEX.owl,bp:ADW::2,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/DIAGONT.owl,ontohub:bioportal/RCTONT.owl,distinct,sibling ontology built on the same template
+candidate,ontohub:bioportal/FMA.ttl,ontohub:iswc2014/FMA.owl,same,two IRI schemes
+candidate,ontohub:bioportal/MO.owl,lov:http://purl.org/ontology/mo/::v2.15,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/NCIT.ttl,ontohub:iswc2014/NCIT.owl,same,two copies
+candidate,ontohub:bioportal/NGSONTO.owl,okg:Q55118532,part,draft
+candidate,ontohub:bioportal/NIFCELL.owl,okg:Q55118467,distinct,the registry links another ontology's file
+candidate,ontohub:bioportal/NIFDYS.owl,okg:Q55118470,same,"two serialisations, other term IRIs"
+candidate,ontohub:bioportal/OMIT.owl,okg:Q113012657,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/PDO.owl,lov:http://vocab.deri.ie/pdo::v1.0,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/PIERO.owl,ontohub:bioportal/PIERO.ttl,same,two serialisations
+candidate,ontohub:bioportal/RB.owl,lov:https://w3id.org/riverbench/schema/metadata::v2023-05-08,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/SAO.owl,lov:http://salt.semanticauthoring.org/ontologies/sao::v2009-06-16,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/SDO.owl,ontohub:fois2016/SDO.owl,same,older copy
+candidate,ontohub:bioportal/SDO.owl,lov:http://salt.semanticauthoring.org/ontologies/sdo::v2009-06-16,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/SP.owl,lov:http://spinrdf.org/sp::V.150,distinct,acronym or IRI collision
+candidate,ontohub:bioportal/SuicidO.owl,ontohub:bioportal/suicideo.owl,same,two releases
+candidate,ontohub:bioportal/UBERON.owl,ontohub:fois2016/UBERON.owl,same,older copy
+candidate,ontohub:bioportal/VSO.owl,lov:http://purl.org/vso/ns::v1.0,distinct,acronym or IRI collision
+candidate,ontohub:botanic-data-set/onto2.owl,ontohub:katona-aron-repository/onto-2.owl,distinct,acronym or IRI collision
+candidate,ontohub:fois2016/BDO.owl,ontohub:iswc2014/BDO.owl,same,two releases
+candidate,ontohub:fois2016/CCONT.owl,ontohub:iswc2014/CCONT.owl,same,two releases
+candidate,ontohub:fois2016/EHDA.owl,ontohub:iswc2014/EHDA.owl,same,two releases
+candidate,ontohub:fois2016/MA.owl,ontohub:iswc2014/ZFA2MA_MA.owl,part,extract
+candidate,ontohub:fois2016/SDO.owl,lov:http://salt.semanticauthoring.org/ontologies/sdo::v2009-06-16,distinct,acronym or IRI collision
+candidate,ontohub:fois2016/TAO.owl,bp:TAO::132,same,older copy
+candidate,ontohub:fois2016/TAO.owl,lov:http://vocab.deri.ie/tao::v2013-02-22,distinct,acronym or IRI collision
+candidate,ontohub:fois2016/ZFA.owl,ontohub:iswc2014/ZFA2MA_ZFA.owl,part,extract
+candidate,ontohub:iswc2014/EP.owl,lov:http://eprints.org/ontology/::v2010-10-20,distinct,acronym or IRI collision
+candidate,ontohub:mnolte2/O3.owl,bp:O3::5,distinct,acronym or IRI collision
+candidate,ontohub:ontohubaopaperexamples/gfo.owl,okg:Q5532347,same,two releases
+candidate,ontohub:socop/DUL.owl,lov:http://www.ontologydesignpatterns.org/ont/dul/DUL.owl::v3.31,same,two releases
+candidate,ontohub:sparqlpresentationfiles/fabianTeaching.rdf,ontohub:sparqlpresentationfiles/fabianTeaching.ttl,same,two serialisations
+candidate,ontohub:sparqlpresentationfiles/tillTeaching.rdf,ontohub:sparqlpresentationfiles/tillTeaching.ttl,same,two serialisations
+candidate,ontohub:syrian-cinema-ontology/SyrianCenimaOntology.owl,ontohub:syrian-cinema-ontology/syrian-cenima-ontology.owl,same,two copies under other IRIs
+candidate,ontohub:tqc-competency-questions/pgr_cm .owl,ontohub:tqc-competency-questions/pgr_cm-.owl,part,variant
+candidate,ontohub:tqc-competency-questions/psr_cm .owl,ontohub:tqc-competency-questions/psr_cm-.owl,part,variant
+candidate,ontohub:tqc-competency-questions/tgr_cm .owl,ontohub:tqc-competency-questions/tgr_cm-.owl,part,variant
+candidate,bp:OCDARREUSE::4,bp:OCDARWN::4,part,module
+candidate,bp:ADO::3,okg:Q54887745,same,renamed terms
+candidate,bp:WIKIPATHWAYS::230,bp:GPML::312,distinct,acronym or IRI collision
+candidate,bp:OF::1,lov:http://owlrep.eu01.aws.af.cm/fridge::v2015-01-11,distinct,acronym or IRI collision
+candidate,bp:OM::33,lov:http://def.seegrid.csiro.au/isotc211/iso19156/2011/observation::2013-11-14,distinct,acronym or IRI collision
+candidate,bp:CEPH::1,okg:Q104030182,part,module
+candidate,bp:TP_REL_FAM::1,okg:Q69901743,same,renamed terms
+candidate,bp:VVO::5,lov:http://purl.org/vvo/ns#::v1.0,distinct,acronym or IRI collision
+candidate,bp:SBO::662,okg:Q2377160,same,two IRI schemes
+candidate,bp:TAO::132,lov:http://vocab.deri.ie/tao::v2013-02-22,distinct,acronym or IRI collision
+candidate,bp:OGDI::2,okg:Q55118517,same,renamed terms
+candidate,bp:FLOPO::9,okg:Q81661625,part,module
+candidate,bp:PSO::2,lov:http://purl.org/spar/pso::v1.71,distinct,acronym or IRI collision
+candidate,ontoportalastro:UAT::1,okg:Q24254757,same,"one thesaurus, no IRI"
+candidate,matportal:CCO::2,lov:http://purl.org/ontology/cco/core#::v0.2,distinct,acronym or IRI collision
+candidate,okg:Q55118423,okg:Q55118424,part,module
+candidate,okg:Q55118423,okg:Q55118426,part,module
+candidate,okg:Q55118424,okg:Q55118426,part,module
+candidate,lov:http://purl.org/ontology/af/::v1.1,lov:http://www.w3.org/1999/02/22-rdf-syntax-ns#::v20191216,distinct,acronym or IRI collision
+candidate,lov:http://ontology.cybershare.utep.edu/ELSEWeb/elseweb-edac.owl::v1.2,lov:http://ontology.cybershare.utep.edu/ELSEWeb/elseweb-lifemapper.owl::v1.2,distinct,acronym or IRI collision
+candidate,lov:http://www.w3.org/ns/ssn/::v2017-04-17,lov:https://www.w3.org/ns/ssn::v2016-12-07,same,draft and final release
