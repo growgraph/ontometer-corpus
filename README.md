@@ -1,4 +1,4 @@
-# ontometer-corpus
+# ontometer-corpus <img src="docs/assets/logo.png" alt="ontometer-corpus logo" height="32" width="32"/>
 
 A corpus of public ontologies, processed into tables: what each ontology is, how ontologies
 depend on one another, and how abstract and how reused they are. The ontologies were collected
@@ -90,6 +90,7 @@ G = load_network("ontometer-corpus/data")  # networkx.MultiDiGraph
 | `abstractness_growth.parquet` | ontology | Birth, first specialisation and dependency counts under two dating rules (`*_bounded`, `*_first_evidence`) |
 | `dating_cache.jsonl` | lookup | Cached web-archive and Wikidata answers behind `ontology_dates`, so dating reruns offline |
 | `redistribution.yaml` | — | Which declared licences allow the raw files to be republished |
+| `dedup_review.csv` | pair of copies | Hand verdicts (`same`, `part` for a module or variant, `distinct`) on the merges deduplication made that the registries' names do not confirm, and on pairs it kept apart that share an acronym, title or ontology IRI; OntoMeter's `research/dedup_audit.py` scores deduplication against them |
 | `zenodo.yaml` | — | Metadata for the archived release of the raw files |
 
 Definitions of the abstractness and dependency measures:
@@ -306,7 +307,8 @@ exactly what was captured, and when.
 A corpus version is a commit of this repository; releases are tags (`git tag`), archived on
 Zenodo: [10.5281/zenodo.24404202](https://doi.org/10.5281/zenodo.24404202) resolves to the
 latest release, and each release has its own DOI (`corpus-2026-08`:
-[10.5281/zenodo.24404203](https://doi.org/10.5281/zenodo.24404203)). Name the
+[10.5281/zenodo.24404203](https://doi.org/10.5281/zenodo.24404203)). `corpus-2026-08.1` is the
+same crawl with revised deduplication. Name the
 commit or tag when you report results, and the OntoMeter version that read it.
 
 Authors: Alexander Belikov (GrowGraph) and David Bareham (CESDIP, CY Cergy Paris Université).

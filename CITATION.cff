@@ -22,11 +22,11 @@ identifiers:
     description: All versions; resolves to the latest release.
   - type: doi
     value: 10.5281/zenodo.24404203
-    description: The corpus-2026-08 release.
+    description: The corpus-2026-08 release (same crawl, earlier deduplication).
 repository: "https://github.com/growgraph/ontometer-corpus"
 license: CC-BY-4.0
-version: corpus-2026-08
-date-released: "2026-11-20"
+version: corpus-2026-08.1
+date-released: "2026-11-25"
 keywords:
   - ontology
   - ontology reuse
