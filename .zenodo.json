@@ -19,8 +19,8 @@
   "keywords": ["ontology", "ontology reuse", "semantic web", "corpus", "RDF", "OWL"],
   "related_identifiers": [
     {
-      "identifier": "https://github.com/growgraph/OntoMeter",
-      "relation": "isDerivedFrom",
+      "identifier": "https://github.com/growgraph/ontometer-corpus",
+      "relation": "isSupplementedBy",
       "resource_type": "software"
     }
   ]

@@ -1,0 +1,39 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.1
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  # `uv run` pins ty to this repo's .venv: a bare `ty` resolves imports against
+  # whatever virtualenv is active in the shell, which may not be this one.
+  # `paper/` is not yet type-checked: its diagnostics are pandas and matplotlib
+  # values passed untyped through the figure code. Widen this once they are fixed.
+  - repo: local
+    hooks:
+      - id: ty
+        name: ty check
+        entry: uv run ty check ontometer_corpus test --exclude ontometer_corpus/paper
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^data/
+      - id: end-of-file-fixer
+        exclude: ^data/
+      - id: check-yaml
+        # properdocs.yml names a Python callable with a `!!python/name` tag (the
+        # mermaid fence); the safe loader rejects any such tag.
+        args: [--unsafe]
+      - id: check-toml
+      # The tables in data/ are tracked on purpose: the crawl cannot be repeated.
+      # The ceiling sits at GitHub's warning threshold, so a growing table is caught
+      # before the host's 100 MiB file limit rejects it.
+      - id: check-added-large-files
+        args: [--maxkb=51200]
+      - id: check-merge-conflict

@@ -1,0 +1,1100 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The abstractness race</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Ccircle cx='48' cy='48' r='47' fill='white'/%3E%3Cg stroke='%237B3F8C' stroke-width='8' stroke-linecap='round'%3E%3Cline x1='42.5' y1='30.9' x2='27.7' y2='62.3'/%3E%3Cline x1='42.5' y1='30.9' x2='68.3' y2='47.5'/%3E%3Cline x1='68.3' y1='47.5' x2='66.5' y2='71.6'/%3E%3C/g%3E%3Cg fill='%237B3F8C'%3E%3Ccircle cx='42.5' cy='30.9' r='17'/%3E%3Ccircle cx='27.7' cy='62.3' r='10'/%3E%3Ccircle cx='68.3' cy='47.5' r='10'/%3E%3Ccircle cx='66.5' cy='71.6' r='10'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<script>
+// `?video` renders the fixed portrait frame used for recordings; `?embed` drops the header and
+// notes that a host page already carries; `?theme=light|dark` forces a scheme.
+const PARAMS = new URLSearchParams(location.search);
+const VIDEO = PARAMS.has("video");
+if (PARAMS.has("embed")) document.documentElement.classList.add("embed");
+(function pickScheme() {
+  const forced = PARAMS.get("theme") || (VIDEO ? "light" : null);
+  if (forced) { document.documentElement.dataset.theme = forced; return; }
+  // Embedded in the documentation site, follow its light/dark toggle rather than
+  // the operating system's. A cross-origin parent is ignored.
+  try {
+    if (window.parent === window) return;
+    const body = window.parent.document.body;
+    const apply = () => {
+      const scheme = body.getAttribute("data-md-color-scheme");
+      if (scheme) document.documentElement.dataset.theme = scheme === "slate" ? "dark" : "light";
+    };
+    apply();
+    new MutationObserver(apply).observe(body, { attributes: true, attributeFilter: ["data-md-color-scheme"] });
+  } catch (e) { /* not same-origin: keep the operating-system preference */ }
+})();
+if (VIDEO) document.documentElement.classList.add("video");
+</script>
+<style>
+:root {
+  --surface: #ffffff;
+  --panel: #f3f4f6;
+  --ink: #1d2430;
+  --ink2: #4a5566;
+  --ink3: #8791a0;
+  --grid: #e3e6ea;
+  --disk: #ffffff;
+  --edge: 41, 50, 65;
+  --focus: #2a78d6;
+  --bar: #c9ced6;
+  --c-ontoportal: #2a78d6;
+  --c-lov: #eb6834;
+  --c-obo: #1baf7a;
+  --c-okg: #8a5cd6;
+  --c-ontohub: #9a8f4a;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface: #1e222a;
+    --panel: #252a33;
+    --ink: #e8eaee;
+    --ink2: #a9b0bc;
+    --ink3: #737b88;
+    --grid: #333944;
+    --disk: #171b21;
+    --edge: 220, 224, 232;
+    --focus: #6aa7ee;
+    --bar: #3b424e;
+    --c-ontoportal: #5b9be6;
+    --c-lov: #f08a5d;
+    --c-obo: #3cc794;
+    --c-okg: #a687e6;
+    --c-ontohub: #bdb170;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #1e222a;
+  --panel: #252a33;
+  --ink: #e8eaee;
+  --ink2: #a9b0bc;
+  --ink3: #737b88;
+  --grid: #333944;
+  --disk: #171b21;
+  --edge: 220, 224, 232;
+  --focus: #6aa7ee;
+  --bar: #3b424e;
+  --c-ontoportal: #5b9be6;
+  --c-lov: #f08a5d;
+  --c-obo: #3cc794;
+  --c-okg: #a687e6;
+  --c-ontohub: #bdb170;
+}
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding-inline: 20px;
+  padding-block: 20px 32px;
+  display: grid;
+  gap: 20px;
+}
+.kicker {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  font-weight: 500;
+}
+header h1 {
+  font-size: 26px;
+  line-height: 1.2;
+  font-weight: 600;
+  margin: 2px 0 0;
+  text-wrap: balance;
+}
+header p {
+  margin: 6px 0 0;
+  color: var(--ink2);
+  max-width: 72ch;
+  text-wrap: pretty;
+}
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: start;
+}
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+}
+.stage canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+  touch-action: manipulation;
+}
+.rail {
+  display: grid;
+  gap: 14px;
+  position: sticky;
+  top: 16px;
+}
+.block {
+  background: var(--panel);
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 10px;
+}
+.label {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  font-weight: 500;
+}
+.year {
+  font-family: var(--mono);
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+button, input[type="search"] {
+  font: inherit;
+  color: var(--ink);
+}
+button {
+  background: var(--surface);
+  border: 1px solid var(--grid);
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 500;
+  min-width: 76px;
+}
+button:hover { border-color: var(--ink3); }
+button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--focus);
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.stat .v {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.stat .k {
+  font-size: 12px;
+  color: var(--ink2);
+}
+
+/* Leaderboard: rows are absolutely placed and eased toward their rank in script. */
+.leaders {
+  position: relative;
+  height: calc(5 * var(--row));
+  --row: 30px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.leaders li {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--row);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 3.2em;
+  align-items: center;
+  column-gap: 8px;
+}
+.leaders .who {
+  position: relative;
+  min-width: 0;
+  height: calc(var(--row) - 6px);
+  display: flex;
+  align-items: center;
+}
+.leaders .bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 3px;
+  background: var(--bar);
+  background: color-mix(in srgb, var(--fam) 22%, var(--surface));
+}
+.leaders .bar::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  border-radius: 3px 0 0 3px;
+  background: var(--fam);
+}
+.leaders .name {
+  position: relative;
+  padding-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+}
+.leaders .name b { font-weight: 600; }
+.leaders .name span { color: var(--ink2); }
+.leaders .n {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  font-size: 13px;
+}
+
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 12px;
+  color: var(--ink2);
+}
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot.hollow { background: transparent !important; border: 1.5px solid var(--ink3); box-sizing: border-box; }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; }
+.toggles label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+input[type="search"] {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--surface);
+  border: 1px solid var(--grid);
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+.detail h2 { font-size: 16px; margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.detail .name { color: var(--ink2); overflow-wrap: anywhere; }
+.detail dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 12px;
+  margin: 6px 0 0;
+  font-size: 13px;
+}
+.detail dt { color: var(--ink2); }
+.detail dd { margin: 0; font-family: var(--mono); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.detail .hint { color: var(--ink3); font-size: 13px; }
+.notes {
+  color: var(--ink2);
+  font-size: 13px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 32px;
+}
+.notes p { margin: 0; text-wrap: pretty; }
+.notes b { color: var(--ink); font-weight: 600; }
+.notes code { font-family: var(--mono); font-size: 12px; }
+@media (max-width: 900px) {
+  .main { grid-template-columns: minmax(0, 1fr); }
+  .rail { position: static; }
+  .notes { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 900px) and (min-width: 560px) {
+  .rail { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+}
+html.embed header, html.embed .notes { display: none; }
+html.embed .wrap { padding-block: 12px; }
+@media (max-width: 480px) {
+  .wrap { padding-inline: 16px; }
+  header h1 { font-size: 22px; }
+}
+
+/* Video-only pieces are hidden on the interactive page. */
+.vonly { display: none; }
+
+/* ---- ?video: a fixed 1080×1350 portrait frame -------------------------------------- */
+html.video, html.video body { width: 1080px; height: 1350px; overflow: hidden; }
+html.video .ponly { display: none !important; }
+html.video .vonly { display: revert; }
+html.video .wrap {
+  box-sizing: border-box;
+  max-width: none;
+  width: 1080px;
+  height: 1350px;
+  padding: 44px 40px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+html.video .kicker { font-size: 17px; }
+html.video header h1 { font-size: 58px; line-height: 1.05; margin-top: 6px; letter-spacing: -0.01em; }
+html.video header p { font-size: 23px; line-height: 1.35; margin-top: 10px; max-width: none; }
+html.video .main { display: block; position: relative; flex: 1; min-height: 0; }
+html.video .stage {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  aspect-ratio: 1 / 1;
+}
+html.video .stage canvas { cursor: default; }
+html.video .ov {
+  position: absolute;
+  display: grid;
+  gap: 2px;
+}
+html.video .ov-year { left: 0; top: 0; }
+html.video .ov-year .year { font-size: 72px; }
+html.video .ov-stats { right: 0; top: 6px; text-align: right; gap: 4px; }
+html.video .ov-stats div { font-size: 19px; color: var(--ink2); }
+html.video .ov-stats b {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 24px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+html.video .band { display: grid; gap: 10px; }
+html.video .band .label { font-size: 15px; }
+html.video .leaders { --row: 35px; }
+html.video .leaders .name, html.video .leaders .n { font-size: 20px; }
+html.video .leaders li { grid-template-columns: minmax(0, 1fr) 3em; column-gap: 12px; }
+html.video .leaders .bar::before { width: 6px; }
+html.video .endcard { display: grid; }
+html.video .foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 16px;
+  color: var(--ink2);
+}
+html.video .foot .legend { font-size: 16px; gap: 6px 18px; }
+html.video .foot .dot { width: 12px; height: 12px; }
+html.video .foot .site { font-weight: 500; color: var(--ink); white-space: nowrap; }
+.endcard {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  pointer-events: none;
+}
+.endcard div {
+  max-width: 780px;
+  padding: 34px 44px;
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--grid), 0 12px 40px rgba(var(--edge), 0.18);
+  font-size: 32px;
+  line-height: 1.35;
+  font-weight: 500;
+  text-align: center;
+  text-wrap: balance;
+}
+.endcard b { font-weight: 600; }
+.endcard span { color: var(--ink2); }
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="kicker" id="kicker">OntoMeter corpus</div>
+    <h1>The abstractness race</h1>
+    <p class="ponly">Each dot is an ontology. When a newer ontology builds on one, declaring its own classes under that one's, the older ontology moves toward the centre. The centre holds the most abstract ontologies: the ones the rest specialise.</p>
+    <p class="vonly">Each dot is an ontology. Every newer ontology that builds on one pulls it toward the centre.</p>
+  </header>
+
+  <div class="main">
+    <div class="stage">
+      <canvas id="disk" aria-label="Poincaré disk of ontologies and specialisation links at the selected year" role="img"></canvas>
+      <div class="endcard vonly" id="endcard"><div id="endtext"></div></div>
+    </div>
+    <div class="ov ov-year vonly"><div class="year" data-stat="year">2026</div></div>
+    <div class="ov ov-stats vonly">
+      <div><b data-stat="n">–</b> ontologies</div>
+      <div><b data-stat="e">–</b> links</div>
+      <div><b data-stat="b">–</b> built on</div>
+    </div>
+
+    <aside class="rail ponly">
+      <div class="block">
+        <div class="label">Year</div>
+        <div class="year" data-stat="year">2026</div>
+        <div class="controls">
+          <button id="play" type="button">Play</button>
+          <input id="slider" type="range" min="2000" max="2027" step="0.05" value="2026" aria-label="Year">
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="v" data-stat="n">–</div><div class="k">ontologies</div></div>
+          <div class="stat"><div class="v" data-stat="e">–</div><div class="k">links</div></div>
+          <div class="stat"><div class="v" data-stat="b">–</div><div class="k">built on</div></div>
+        </div>
+      </div>
+
+      <div class="block" id="leaders-block">
+        <div class="label">Closest to the centre</div>
+        <ol class="leaders" id="leaders" aria-label="The five ontologies built on by the most ontologies at the selected year"></ol>
+      </div>
+
+      <div class="block chart">
+        <div class="label">Share built on by another ontology</div>
+        <svg id="chart" viewBox="0 0 300 150" role="img" aria-label="Share of ontologies built on by another ontology, whole corpus and birth cohorts"></svg>
+      </div>
+
+      <div class="block">
+        <input id="search" type="search" list="labels" placeholder="Find an ontology (e.g. BFO, dcat)" aria-label="Find an ontology">
+        <datalist id="labels"></datalist>
+        <div class="toggles">
+          <label><input id="t-links" type="checkbox" checked> Show links</label>
+          <label><input id="t-subjects" type="checkbox"> Only ontologies with a hierarchy</label>
+        </div>
+        <div class="legend" data-legend></div>
+      </div>
+
+      <div class="block detail" id="detail"></div>
+    </aside>
+  </div>
+
+  <div class="band vonly" id="band">
+    <div class="label">Closest to the centre</div>
+  </div>
+  <div class="foot vonly">
+    <div class="legend" data-legend></div>
+    <div class="site">OntoMeter Corpus · growgraph.github.io/ontometer-corpus</div>
+  </div>
+
+  <div class="notes ponly" id="notes">
+    <p><b>How to read it.</b> A link from one ontology to another means it specialises it: it declares classes under the other's classes, that is, it builds on it. The angle is fixed. Each ontology sits in the wedge of the ontology it specialises most, and top-level groups follow reuse communities. The distance from the centre is hyperbolic: <code>r = r<sub>max</sub>·(1 − log(1+s)/log N)</code>, where s counts the ontologies that build on it, directly or transitively, by that year. N is one more than the largest s at capture, so the leader ends at the centre. Dashed rings mark s = 1, 10 and 100. Filled dots are built on by at least one ontology; hollow dots are not, yet.</p>
+    <p><b>Dates.</b> An ontology appears at its first-evidence date: the earliest of its registry release dates, the first web-archive capture of its IRI and its Wikidata inception date, and never later than the first observed specialisation of its classes. A link appears at the first release that asserts it when the release panel covers the specialiser, and otherwise at the specialiser's first evidence. Registries and the web archive start later than the oldest ontologies, so those are dated late and appear already built on: their leaf phase is not observed. <span id="n-undated"></span></p>
+  </div>
+</div>
+
+<script>
+fetch("growth_graph.json")
+  .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(start)
+  .catch((err) => {
+    document.getElementById("detail").textContent =
+      "Could not load growth_graph.json (" + err.message + "). Browsers refuse to fetch files " +
+      "from a page opened from disk: serve this folder over HTTP, e.g. `python -m http.server`.";
+  });
+
+function start(D) {
+  "use strict";
+  const FAMILY = {
+    BioPortal: "ontoportal", AgroPortal: "ontoportal", BiodivPortal: "ontoportal",
+    MatPortal: "ontoportal", "OntoPortal-Astro": "ontoportal", TechnoPortal: "ontoportal",
+    LOV: "lov", OBO: "obo", OKG: "okg", Ontohub: "ontohub",
+  };
+  const FAMILY_LABEL = {
+    ontoportal: "OntoPortal registries", lov: "LOV", obo: "OBO Foundry",
+    okg: "Open Knowledge Graphs", ontohub: "Ontohub",
+  };
+  const FAMILY_SHORT = { ontoportal: "OntoPortal", lov: "LOV", obo: "OBO", okg: "OKG", ontohub: "Ontohub" };
+  const meta = D.meta;
+  const nodes = D.nodes;
+  const edges = D.edges;
+  const N = meta.n_final;
+  const RMAX = meta.r_max;
+  const T0 = Math.max(2005, Math.floor(meta.start_year));
+  const T1 = meta.as_of_year;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const EASE = 0.18;
+
+  const nRegistries = new Set(nodes.map((n) => n.registry)).size;
+  document.getElementById("kicker").textContent =
+    "OntoMeter corpus · " + meta.n_shown.toLocaleString() + " ontologies · " +
+    nRegistries + " registries · captured " + meta.as_of;
+  document.getElementById("n-undated").textContent =
+    meta.n_shown.toLocaleString() + " of " + meta.n_ontologies.toLocaleString() +
+    " ontologies have a date and are shown; " + meta.n_undated.toLocaleString() +
+    " are left out. Capture: " + meta.as_of + ".";
+
+  // --- per-node state ---------------------------------------------------------
+  const deg = new Array(nodes.length).fill(null).map(() => ({ up: [], down: [] }));
+  edges.forEach((e, i) => { deg[e[0]].up.push(i); deg[e[1]].down.push(i); });
+  nodes.forEach((n) => {
+    n.fam = FAMILY[n.registry] || "ontohub";
+    n.cx = Math.cos(n.angle);
+    n.cy = Math.sin(n.angle);
+    n.rho = null; // displayed radius, eased toward the target
+    n.sNow = 0;
+  });
+
+  function specAt(n, t) {
+    let s = 0;
+    for (const st of n.steps) { if (st[0] <= t) s = st[1]; else break; }
+    return s;
+  }
+  function radius(s) {
+    const frac = Math.log1p(s) / Math.log(Math.max(N, 2));
+    const r = RMAX * Math.min(1, Math.max(0, 1 - frac));
+    return Math.tanh(r / 2);
+  }
+  // A readable secondary name: the full title, or the IRI without its scheme.
+  function subtitle(n) {
+    if (!n.name || n.name === n.label) return "";
+    return n.name.replace(/^https?:\/\/(www\.)?/, "");
+  }
+
+  // --- canvas -------------------------------------------------------------------
+  const canvas = document.getElementById("disk");
+  const ctx = canvas.getContext("2d");
+  let W = 0, R = 0, CX = 0, CY = 0, dpr = 1, K = 1;
+  function resize() {
+    const box = canvas.getBoundingClientRect();
+    dpr = window.devicePixelRatio || 1;
+    W = box.width;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(W * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    R = W / 2 - 8;
+    CX = W / 2;
+    CY = W / 2;
+    K = Math.max(0.6, Math.min(1.1, W / 880)); // dot scale, so small screens stay legible
+    draw();
+  }
+  function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  let colors = {};
+  function readColors() {
+    colors = {
+      ink: css("--ink"), ink2: css("--ink2"), ink3: css("--ink3"), grid: css("--grid"),
+      disk: css("--disk"), edge: css("--edge"), focus: css("--focus"), mono: css("--mono"), sans: css("--sans"),
+      ontoportal: css("--c-ontoportal"), lov: css("--c-lov"), obo: css("--c-obo"),
+      okg: css("--c-okg"), ontohub: css("--c-ontohub"),
+    };
+  }
+  // Text with a halo in the disk colour, so labels stay legible over links and dots.
+  function haloText(text, x, y, fill) {
+    ctx.lineJoin = "round";
+    ctx.lineWidth = VIDEO ? 4 : 3;
+    ctx.strokeStyle = colors.disk;
+    ctx.strokeText(text, x, y);
+    ctx.fillStyle = fill;
+    ctx.fillText(text, x, y);
+  }
+
+  // Poincaré geodesic between two disk points (unit-disk coordinates).
+  function geodesic(ax, ay, bx, by) {
+    const cross = ax * by - ay * bx;
+    if (Math.abs(cross) < 1e-4) return null;
+    let px = ax, py = ay, qx = bx, qy = by;
+    let n2 = px * px + py * py;
+    if (n2 < 1e-6) { px = bx; py = by; qx = ax; qy = ay; n2 = px * px + py * py; }
+    const ix = px / n2, iy = py / n2; // inversion of p in the unit circle
+    // Circumcentre of p, q, p*.
+    const d = 2 * (px * (qy - iy) + qx * (iy - py) + ix * (py - qy));
+    if (Math.abs(d) < 1e-9) return null;
+    const p2 = px * px + py * py, q2 = qx * qx + qy * qy, i2 = ix * ix + iy * iy;
+    const ux = (p2 * (qy - iy) + q2 * (iy - py) + i2 * (py - qy)) / d;
+    const uy = (p2 * (ix - qx) + q2 * (px - ix) + i2 * (qx - px)) / d;
+    const r = Math.hypot(ax - ux, ay - uy);
+    const a1 = Math.atan2(ay - uy, ax - ux);
+    const a2 = Math.atan2(by - uy, bx - ux);
+    let delta = a2 - a1;
+    while (delta > Math.PI) delta -= 2 * Math.PI;
+    while (delta < -Math.PI) delta += 2 * Math.PI;
+    return { ux, uy, r, a1, a2, ccw: delta < 0 };
+  }
+
+  const state = {
+    t: T1, playing: false, selected: -1, hover: -1, links: true, subjects: false,
+  };
+
+  function visible(n, t) {
+    return n.birth <= t && (!state.subjects || n.subject);
+  }
+  function nodeXY(n) {
+    return [CX + n.cx * n.rho * R, CY + n.cy * n.rho * R];
+  }
+  function dotSize(s) {
+    return K * (1.8 + 1.25 * Math.log1p(s));
+  }
+
+  const RING_ANGLE = -Math.PI / 4; // ring labels sit in the upper right, away from the hubs
+  const LABELS = VIDEO ? 9 : 12;   // labelled hubs, besides hover and focus
+
+  function draw() {
+    if (!W) return;
+    const t = state.t;
+    ctx.clearRect(0, 0, W, W);
+    // Disk and reference rings.
+    ctx.fillStyle = colors.disk;
+    ctx.beginPath(); ctx.arc(CX, CY, R, 0, 2 * Math.PI); ctx.fill();
+    ctx.strokeStyle = colors.grid; ctx.lineWidth = 1;
+    ctx.stroke();
+    [1, 10, 100].forEach((s) => {
+      const rr = radius(s) * R;
+      ctx.strokeStyle = colors.grid; ctx.lineWidth = 1;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath(); ctx.arc(CX, CY, rr, 0, 2 * Math.PI); ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    const sel = state.selected;
+    const focusSet = new Set();
+    if (sel >= 0) {
+      focusSet.add(sel);
+      deg[sel].up.forEach((i) => { if (edges[i][2] <= t) focusSet.add(edges[i][1]); });
+      deg[sel].down.forEach((i) => { if (edges[i][2] <= t) focusSet.add(edges[i][0]); });
+    }
+
+    // Links as geodesics.
+    if (state.links) {
+      const base = VIDEO ? 0.16 : 0.13;
+      ctx.lineWidth = VIDEO ? 0.7 : 0.6;
+      for (let i = 0; i < edges.length; i++) {
+        const e = edges[i];
+        if (e[2] > t) continue;
+        const a = nodes[e[0]], b = nodes[e[1]];
+        if (!visible(a, t) || !visible(b, t)) continue;
+        const inFocus = sel >= 0 && (e[0] === sel || e[1] === sel);
+        if (sel >= 0 && !inFocus) {
+          ctx.strokeStyle = "rgba(" + colors.edge + ",0.04)";
+        } else if (inFocus) {
+          ctx.strokeStyle = colors.focus; ctx.lineWidth = 1.2;
+        } else {
+          ctx.strokeStyle = "rgba(" + colors.edge + "," + base + ")";
+        }
+        const ax = a.cx * a.rho, ay = a.cy * a.rho, bx = b.cx * b.rho, by = b.cy * b.rho;
+        const g = geodesic(ax, ay, bx, by);
+        ctx.beginPath();
+        if (!g || g.r * R > 40 * W) {
+          ctx.moveTo(CX + ax * R, CY + ay * R); ctx.lineTo(CX + bx * R, CY + by * R);
+        } else {
+          ctx.arc(CX + g.ux * R, CY + g.uy * R, g.r * R, g.a1, g.a2, g.ccw);
+        }
+        ctx.stroke();
+        if (inFocus) ctx.lineWidth = VIDEO ? 0.7 : 0.6;
+      }
+    }
+
+    // Nodes: leaves first, built-on ones on top.
+    const order = [];
+    for (let i = 0; i < nodes.length; i++) if (visible(nodes[i], t)) order.push(i);
+    order.sort((i, j) => nodes[i].sNow - nodes[j].sNow);
+    for (const i of order) {
+      const n = nodes[i];
+      const [x, y] = nodeXY(n);
+      const s = n.sNow;
+      const size = dotSize(s);
+      const dim = sel >= 0 && !focusSet.has(i);
+      const col = colors[n.fam];
+      const age = Math.min(1, (t - n.birth) / 0.6);
+      ctx.globalAlpha = (dim ? 0.15 : 1) * (0.25 + 0.75 * age);
+      ctx.beginPath(); ctx.arc(x, y, size, 0, 2 * Math.PI);
+      if (s > 0) {
+        ctx.fillStyle = col; ctx.fill();
+      } else {
+        ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // Ring labels, drawn after the dots so they stay readable.
+    ctx.font = (VIDEO ? "14px " : "11px ") + colors.mono;
+    [1, 10, 100].forEach((s) => {
+      const rr = radius(s) * R;
+      const x = CX + Math.cos(RING_ANGLE) * rr, y = CY + Math.sin(RING_ANGLE) * rr;
+      const text = s === 1 ? "built on by 1" : String(s);
+      haloText(text, Math.min(x + 5, W - ctx.measureText(text).width - 4), y - 5, colors.ink3);
+    });
+
+    // Labels: hovered and focused first, then the hubs; skip any that would overlap.
+    ctx.font = (VIDEO ? "600 16px " : "500 12px ") + colors.sans;
+    const hubs = order.filter((i) => nodes[i].sNow > 0).slice(-(W < 500 ? 7 : LABELS));
+    const want = new Set(hubs);
+    focusSet.forEach((i) => want.add(i));
+    if (state.hover >= 0) want.add(state.hover);
+    const rank = (i) => (i === state.hover ? 2e9 : focusSet.has(i) ? 1e9 : 0) + nodes[i].sNow;
+    const ranked = [...want].filter((i) => visible(nodes[i], t)).sort((i, j) => rank(j) - rank(i));
+    const placed = [];
+    const lh = VIDEO ? 16 : 12;
+    for (const i of ranked) {
+      const n = nodes[i];
+      if (sel >= 0 && !focusSet.has(i) && i !== state.hover) continue;
+      const [x, y] = nodeXY(n);
+      const size = dotSize(n.sNow);
+      const text = n.label.length > 22 ? n.label.slice(0, 21) + "…" : n.label;
+      const w = ctx.measureText(text).width;
+      // Try the outer side of the dot first, then the other side, then a line up or down,
+      // so the tightly packed centre still gets its names.
+      const outer = n.cx >= -0.2 ? 1 : -1;
+      const tries = [[outer, 0], [-outer, 0], [outer, -1], [outer, 1], [-outer, -1], [-outer, 1]];
+      let chosen = null;
+      for (const [side, dy] of tries) {
+        const x0 = side > 0 ? x + size + 4 : x - size - 4 - w;
+        const yc = y + dy * (lh + 2);
+        const box = [x0 - 2, yc - lh / 2 - 2, x0 + w + 2, yc + lh / 2 + 2];
+        const hit = placed.some((b) => !(box[2] < b[0] || box[0] > b[2] || box[3] < b[1] || box[1] > b[3]));
+        if (!hit) { chosen = [x0, yc, box]; break; }
+        if (i === state.hover && !chosen) chosen = [x0, yc, box];
+      }
+      if (!chosen) continue;
+      placed.push(chosen[2]);
+      haloText(text, chosen[0], chosen[1] + lh * 0.35, colors.ink);
+    }
+    if (state.hover >= 0 && visible(nodes[state.hover], t)) {
+      const [x, y] = nodeXY(nodes[state.hover]);
+      const size = dotSize(nodes[state.hover].sNow);
+      ctx.strokeStyle = colors.ink; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(x, y, size + 3, 0, 2 * Math.PI); ctx.stroke();
+    }
+  }
+
+  // --- leaderboard ------------------------------------------------------------------
+  const leadersEl = document.getElementById("leaders");
+  if (VIDEO) document.getElementById("band").appendChild(leadersEl);
+  const rows = new Map(); // node index → { el, y, bar, w }
+  const TOP = 5;
+  function rowHeight() { return parseFloat(getComputedStyle(leadersEl).getPropertyValue("--row")) || 30; }
+  function updateLeaders(snap) {
+    const t = state.t;
+    const top = [];
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i];
+      if (n.sNow > 0 && visible(n, t)) top.push(i);
+    }
+    top.sort((i, j) => nodes[j].sNow - nodes[i].sNow || nodes[i].birth - nodes[j].birth);
+    top.length = Math.min(top.length, TOP);
+    const h = rowHeight();
+    const keep = new Set(top);
+    for (const [i, r] of rows) if (!keep.has(i)) { r.el.remove(); rows.delete(i); }
+    let moving = false;
+    top.forEach((i, k) => {
+      const n = nodes[i];
+      let r = rows.get(i);
+      if (!r) {
+        const li = document.createElement("li");
+        li.innerHTML = '<div class="who"><i class="bar"></i><div class="name"><b></b> <span></span></div></div><div class="n"></div>';
+        li.querySelector("b").textContent = n.label;
+        li.querySelector(".name span").textContent = subtitle(n);
+        li.style.setProperty("--fam", colors[n.fam]);
+        leadersEl.appendChild(li);
+        r = { el: li, y: TOP * h, w: 0, bar: li.querySelector(".bar"), num: li.querySelector(".n") };
+        rows.set(i, r);
+      }
+      const ty = k * h;
+      const tw = n.sNow / Math.max(N - 1, 1); // linear, so gaps between leaders read true
+      if (snap || reduce) { r.y = ty; r.w = tw; }
+      else { r.y += (ty - r.y) * 0.25; r.w += (tw - r.w) * EASE; }
+      if (Math.abs(ty - r.y) > 0.3 || Math.abs(tw - r.w) > 1e-3) moving = true;
+      r.el.style.transform = "translateY(" + r.y.toFixed(1) + "px)";
+      r.el.style.opacity = r.y > (TOP - 0.5) * h ? "0.4" : "1";
+      r.bar.style.width = (100 * r.w).toFixed(2) + "%";
+      r.num.textContent = n.sNow.toLocaleString();
+    });
+    return moving;
+  }
+  function recolorLeaders() {
+    for (const [i, r] of rows) r.el.style.setProperty("--fam", colors[nodes[i].fam]);
+  }
+
+  // --- time ---------------------------------------------------------------------
+  const slider = document.getElementById("slider");
+  slider.min = T0; slider.max = T1.toFixed(2);
+  const statEls = (k) => document.querySelectorAll('[data-stat="' + k + '"]');
+  const yearEls = statEls("year"), nEls = statEls("n"), eEls = statEls("e"), bEls = statEls("b");
+  const setAll = (els, v) => els.forEach((el) => { el.textContent = v; });
+  let leadersMoving = false;
+  let share = 0;
+
+  function updateState(snap) {
+    const t = state.t;
+    let nVis = 0, nBranch = 0, nLinks = 0;
+    for (const n of nodes) {
+      n.sNow = specAt(n, t);
+      const target = radius(n.sNow);
+      if (n.rho === null || snap || reduce) n.rho = target;
+      else n.rho += (target - n.rho) * EASE;
+      if (visible(n, t)) { nVis++; if (n.first !== null && n.first <= t) nBranch++; }
+    }
+    for (const e of edges) if (e[2] <= t && visible(nodes[e[0]], t) && visible(nodes[e[1]], t)) nLinks++;
+    share = nVis ? nBranch / nVis : 0;
+    setAll(yearEls, Math.floor(t));
+    setAll(nEls, nVis.toLocaleString());
+    setAll(eEls, nLinks.toLocaleString());
+    setAll(bEls, nVis ? Math.round(100 * share) + "%" : "–");
+    slider.value = t;
+    leadersMoving = updateLeaders(snap);
+    drawCursor();
+    renderDetail();
+  }
+
+  let last = 0;
+  function frame(ts) {
+    if (state.playing) {
+      const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0;
+      state.t = Math.min(T1, state.t + dt * 0.9);
+      if (state.t >= T1) setPlaying(false);
+    }
+    last = ts;
+    const moving = leadersMoving || nodes.some((n) => Math.abs(radius(n.sNow) - n.rho) > 1e-4);
+    updateState(false);
+    draw();
+    if (state.playing || moving) requestAnimationFrame(frame);
+    else last = 0;
+  }
+  function kick() { requestAnimationFrame(frame); }
+
+  const playBtn = document.getElementById("play");
+  function setPlaying(on) {
+    state.playing = on;
+    playBtn.textContent = on ? "Pause" : "Play";
+    if (on) {
+      if (state.t >= T1 - 0.01) {
+        state.t = T0;
+        nodes.forEach((n) => { n.rho = null; });
+        updateState(true);
+      }
+      last = 0;
+      kick();
+    }
+  }
+  playBtn.addEventListener("click", () => setPlaying(!state.playing));
+  slider.addEventListener("input", () => {
+    setPlaying(false);
+    state.t = parseFloat(slider.value);
+    kick();
+  });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.code === "Space" && ev.target === document.body) { ev.preventDefault(); setPlaying(!state.playing); }
+  });
+
+  // --- chart --------------------------------------------------------------------
+  const svg = document.getElementById("chart");
+  const S = D.series;
+  const cohortNames = Object.keys(S.cohorts);
+  const peak = Math.max(...[S.corpus, ...cohortNames.map((k) => S.cohorts[k])].flat().filter((v) => v !== null));
+  const yMax = Math.max(0.3, Math.ceil(peak * 10) / 10);
+  const cX0 = 30, cX1 = 236, cY0 = 132, cY1 = 10;
+  const sx = (y) => cX0 + ((y - T0) / (T1 - T0)) * (cX1 - cX0);
+  const sy = (v) => cY0 - (v / yMax) * (cY0 - cY1);
+  const NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(e);
+    return e;
+  }
+  function cohortLabel(k) {
+    return /^before/.test(k) ? "born <" + k.replace(/\D+/g, "") : "born " + k.replace("-", "–");
+  }
+  let cursor = null;
+  function buildChart() {
+    svg.textContent = "";
+    for (let v = 0; v <= yMax + 1e-9; v += 0.1) {
+      el("line", { x1: cX0, x2: cX1, y1: sy(v), y2: sy(v), stroke: colors.grid, "stroke-width": 1 });
+      const tx = el("text", { x: cX0 - 5, y: sy(v) + 3.5, "text-anchor": "end", "font-size": 9, fill: colors.ink3, "font-family": colors.mono });
+      tx.textContent = Math.round(v * 100) + "%";
+    }
+    [2005, 2010, 2015, 2020, 2025].forEach((y) => {
+      if (y < T0 || y > T1) return;
+      const tx = el("text", { x: sx(y), y: 146, "text-anchor": "middle", "font-size": 9, fill: colors.ink3, "font-family": colors.mono });
+      tx.textContent = y;
+    });
+    // One neutral hue: the corpus line is heavy, cohorts are light and labelled at their ends.
+    const series = [["all", S.corpus, colors.ink, 2.2, colors.ink]];
+    cohortNames.forEach((k) => series.push([cohortLabel(k), S.cohorts[k], colors.ink3, 1.4, colors.ink2]));
+    const ends = [];
+    for (const [name, vals, col, w, textCol] of series) {
+      let d = "", lastV = null;
+      vals.forEach((v, i) => {
+        if (v === null || S.years[i] < T0) return;
+        d += (d ? "L" : "M") + sx(S.years[i]).toFixed(1) + "," + sy(v).toFixed(1);
+        lastV = v;
+      });
+      el("path", { d, fill: "none", stroke: col, "stroke-width": w, "stroke-linejoin": "round" });
+      if (lastV !== null) ends.push({ name, y: sy(lastV), col: textCol, bold: w > 2 });
+    }
+    // End labels, nudged apart so they never overlap.
+    ends.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) ends[i].y = Math.max(ends[i].y, ends[i - 1].y + 10);
+    for (const e of ends) {
+      const tx = el("text", { x: cX1 + 5, y: e.y + 3, "font-size": 9.5, fill: e.col, "font-family": colors.sans, "font-weight": e.bold ? 600 : 400 });
+      tx.textContent = e.name;
+    }
+    cursor = el("line", { x1: 0, x2: 0, y1: cY1, y2: cY0, stroke: colors.focus, "stroke-width": 1.2 });
+    drawCursor();
+  }
+  function drawCursor() {
+    if (!cursor) return;
+    const x = sx(Math.max(T0, state.t));
+    cursor.setAttribute("x1", x); cursor.setAttribute("x2", x);
+  }
+
+  // --- legend, search, toggles -------------------------------------------------------
+  function buildLegend() {
+    document.querySelectorAll("[data-legend]").forEach((lg) => {
+      lg.textContent = "";
+      const item = (cls, color, text) => {
+        const sp = document.createElement("span");
+        const dot = document.createElement("i");
+        dot.className = cls;
+        if (color) dot.style.background = color;
+        sp.appendChild(dot); sp.appendChild(document.createTextNode(text));
+        lg.appendChild(sp);
+      };
+      Object.keys(FAMILY_LABEL).forEach((f) => item("dot", colors[f], VIDEO ? FAMILY_SHORT[f] : FAMILY_LABEL[f]));
+      item("dot hollow", null, "not built on yet");
+    });
+  }
+  const dl = document.getElementById("labels");
+  const byLabel = new Map();
+  nodes.forEach((n, i) => {
+    const key = n.label.toLowerCase();
+    if (!byLabel.has(key) || nodes[byLabel.get(key)].steps.length < n.steps.length) byLabel.set(key, i);
+  });
+  [...byLabel.keys()].sort().forEach((k) => {
+    const o = document.createElement("option"); o.value = nodes[byLabel.get(k)].label; dl.appendChild(o);
+  });
+  document.getElementById("search").addEventListener("change", (ev) => {
+    const i = byLabel.get(ev.target.value.trim().toLowerCase());
+    if (i !== undefined) { state.selected = i; state.hover = i; renderDetail(); draw(); }
+  });
+  document.getElementById("t-links").addEventListener("change", (ev) => { state.links = ev.target.checked; draw(); });
+  document.getElementById("t-subjects").addEventListener("change", (ev) => { state.subjects = ev.target.checked; updateState(true); draw(); });
+
+  // --- hover and selection ------------------------------------------------------------
+  function pick(ev) {
+    const box = canvas.getBoundingClientRect();
+    const x = ev.clientX - box.left, y = ev.clientY - box.top;
+    let best = -1, bestD = 12 * 12;
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i];
+      if (!visible(n, state.t)) continue;
+      const [nx, ny] = nodeXY(n);
+      const d = (nx - x) ** 2 + (ny - y) ** 2;
+      if (d < bestD) { bestD = d; best = i; }
+    }
+    return best;
+  }
+  if (!VIDEO) {
+    canvas.addEventListener("mousemove", (ev) => {
+      const i = pick(ev);
+      if (i !== state.hover) { state.hover = i; renderDetail(); draw(); }
+    });
+    canvas.addEventListener("mouseleave", () => { state.hover = -1; renderDetail(); draw(); });
+    canvas.addEventListener("click", (ev) => {
+      const i = pick(ev);
+      state.selected = i === state.selected ? -1 : i;
+      state.hover = i;
+      renderDetail(); draw();
+    });
+  }
+
+  function fmtYear(y) { return y === null ? "—" : Math.floor(y).toString(); }
+  const HINT = '<div class="hint">Hover over an ontology for its details; click one to highlight what it builds on and what builds on it.</div>';
+  let detailKey = "";
+  function renderDetail() {
+    const box = document.getElementById("detail");
+    const i = state.hover >= 0 ? state.hover : state.selected;
+    const t = state.t;
+    const key = i + ":" + (i >= 0 ? nodes[i].sNow + ":" + Math.floor(t * 4) : "");
+    if (key === detailKey) return;
+    detailKey = key;
+    if (i < 0) { box.innerHTML = HINT; return; }
+    const n = nodes[i];
+    const direct = deg[i].down.filter((k) => edges[k][2] <= t).length;
+    const parents = deg[i].up.filter((k) => edges[k][2] <= t).map((k) => nodes[edges[k][1]].label);
+    box.textContent = "";
+    const h = document.createElement("h2"); h.textContent = n.label; box.appendChild(h);
+    const sub = subtitle(n);
+    if (sub) { const nm = document.createElement("div"); nm.className = "name"; nm.textContent = n.name; box.appendChild(nm); }
+    const dlEl = document.createElement("dl");
+    const rows = [
+      ["registry", n.registry],
+      ["first evidence", fmtYear(n.birth)],
+      ["first built on", n.first === null ? "not by capture" : fmtYear(n.first)],
+      ["built on by", direct + " directly, " + n.sNow + " in all"],
+      ["builds on", parents.length ? parents.slice(0, 6).join(", ") + (parents.length > 6 ? " +" + (parents.length - 6) : "") : "nothing"],
+    ];
+    if (n.birth > t) rows.unshift(["status", "not yet in G(t)"]);
+    for (const [k, v] of rows) {
+      const dt = document.createElement("dt"); dt.textContent = k;
+      const dd = document.createElement("dd"); dd.textContent = v;
+      dlEl.appendChild(dt); dlEl.appendChild(dd);
+    }
+    box.appendChild(dlEl);
+  }
+
+  // --- end card (video) -------------------------------------------------------------
+  const endcard = document.getElementById("endcard");
+  function endText() {
+    const lead = [...nodes].filter((n) => visible(n, state.t))
+      .sort((a, b) => b.sNow - a.sNow).slice(0, 3).map((n) => n.label);
+    const pct = Math.round(100 * share);
+    const el = document.getElementById("endtext");
+    el.textContent = "";
+    const b = document.createElement("b"); b.textContent = pct + "% of ontologies";
+    el.appendChild(b);
+    el.appendChild(document.createTextNode(" are built on by another."));
+    el.appendChild(document.createElement("br"));
+    const sp = document.createElement("span");
+    sp.textContent = "Nothing builds on the other " + (100 - pct) + "% yet. Closest to the centre: " +
+      lead.slice(0, -1).join(", ") + " and " + lead[lead.length - 1] + ".";
+    el.appendChild(sp);
+  }
+
+  // --- boot -------------------------------------------------------------------------
+  function restyle() { readColors(); buildChart(); buildLegend(); recolorLeaders(); detailKey = ""; draw(); }
+  readColors();
+  buildLegend();
+  buildChart();
+  updateState(true);
+  resize();
+  new ResizeObserver(resize).observe(canvas);
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", restyle);
+  new MutationObserver(restyle).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  // Deterministic driver for recordings: a frame is a pure function of the calls made.
+  window.gt = {
+    T0, T1,
+    seek(t) { setPlaying(false); state.t = t; updateState(true); draw(); },
+    step(t) { setPlaying(false); state.t = Math.min(T1, Math.max(T0, t)); updateState(false); draw(); },
+    endcard(alpha) { if (alpha > 0) endText(); endcard.style.opacity = String(alpha); },
+    ready: true,
+  };
+  document.documentElement.dataset.ready = "1";
+
+  // Same-origin host page: grow the iframe to the content, so it never scrolls inside.
+  try {
+    const frame = window.frameElement;
+    if (frame) {
+      const fit = () => { frame.style.height = Math.ceil(document.body.getBoundingClientRect().height) + 2 + "px"; };
+      new ResizeObserver(fit).observe(document.body);
+      fit();
+    }
+  } catch (e) { /* cross-origin host: keep its height */ }
+}
+</script>

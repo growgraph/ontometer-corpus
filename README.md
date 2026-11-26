@@ -6,11 +6,12 @@ from public registries (the OntoPortal instances BioPortal, AgroPortal, BiodivPo
 TechnoPortal and OntoPortal-Astro, plus OBO Foundry, Ontohub, Open Knowledge Graphs and LOV),
 then parsed and deduplicated across registries and versions.
 
-Everything here is produced by [**OntoMeter**](https://github.com/growgraph/OntoMeter), the
-ontology-quality and ontology-population toolkit. You do not need OntoMeter to *read* the data:
-every table is Parquet, SQLite, JSON Lines or TSV, and the network recipes below need only
-`pandas` and `networkx`. OntoMeter adds ready-made loaders and the pipeline that rebuilds the
-tables.
+The tables are derived by the Python package in this repository, `ontometer-corpus`, which also
+holds the analysis behind the paper that describes the corpus. You do not need the package to
+*read* the data: every table is Parquet, SQLite, JSON Lines or TSV, and the network recipes below
+need only `pandas` and `networkx`. The package adds ready-made loaders, the pipeline that
+rebuilds the tables, and the commands that regenerate the paper's figures and numbers
+([documentation](https://growgraph.github.io/ontometer-corpus/)).
 
 The raw ontology files are **not** in this repository (see [The raw files](#the-raw-files)).
 
@@ -23,9 +24,10 @@ The raw ontology files are **not** in this repository (see [The raw files](#the-
 - [The specialisation network, and G(t)](#the-specialisation-network-and-gt)
 - [The registry database, `corpus.db`](#the-registry-database-corpusdb)
 - [The raw files](#the-raw-files)
-- [Working with OntoMeter](#working-with-ontometer)
+- [The package](#the-package)
 - [Versions, citing, licence](#versions-citing-licence)
 
+<!-- --8<-- [start:tables] -->
 ## Quick start: the ontology network in memory
 
 ```bash
@@ -59,11 +61,11 @@ G.number_of_nodes(), G.number_of_edges(), len(corpus)
 `G` is the **dependency network**: one node per ontology in the corpus plus one per external
 target it references, and directed edges `ontology → what it depends on`, keyed by
 `edge_type` (`import` or `usage`). Each (source, target, edge type) occurs once, so the key is
-unique. The whole graph fits comfortably in memory (tens of thousands of edges). With OntoMeter
-installed, the same graph is one call:
+unique. The whole graph fits comfortably in memory. With the package installed
+(`pip install "ontometer-corpus[tables]"`), the same graph is one call:
 
 ```python
-from ontometer.corpus.network.construction import load_network
+from ontometer_corpus.network.construction import load_network
 
 G = load_network("ontometer-corpus/data")  # networkx.MultiDiGraph
 ```
@@ -80,8 +82,7 @@ G = load_network("ontometer-corpus/data")  # networkx.MultiDiGraph
 | `namespace_usage.parquet` | (file, namespace) | Distinct terms a file uses from a namespace, by how: logically, as annotation, or only declared |
 | `term_coupling.parquet` | file | How many of a file's terms are external, over all terms, domain terms and logically used terms; counts of logical statements and restrictions |
 | `structural_metrics.parquet` | file | Shape of the class hierarchy: roots, depth (mean, max, histogram), branching, multiple inheritance, orphans, cycles |
-| `oquare_metrics.parquet` | file | The OQuaRE metrics (`ANOnto`, `DITOnto`, `NOCOnto`, …) as OntoMeter computes them |
-| `ontology_metrics.parquet` | ontology | One wide table joining the above: counts, hierarchy shape, coupling, OQuaRE (`oq_*`) and position in the reuse network (degrees, PageRank, betweenness, IDF-weighted reuse). Indexed by network `node` |
+| `ontology_metrics.parquet` | ontology | One wide table joining the above: counts, hierarchy shape, coupling and position in the reuse network (degrees, PageRank, betweenness, IDF-weighted reuse). Indexed by network `node` |
 | `ontology_abstractness.parquet` | ontology (release family) | Term-based abstractness: `A_local`, `A_global`, `A_class`; dependency metrics `Ca`, `Ce`, `I`, `D`; `layer`, reuse `community`; population flags `subject`, `kb_like`, `flat`. Index `onto` (0..n-1) |
 | `ontology_specialisations.parquet` | (child, parent) ontology pair | The **specialisation network**: the child asserts one of its classes under a class of the parent; `n_terms` such assertions; `panel_first`, the first release that asserts it where known |
 | `concept_redeclarations.parquet` | normalised class label | Labels declared as an own class in at least three home ontologies: `n_homes`, `n_terms`, and `cover`, the largest share of those declarations one common ancestor unites (copied edges left out), with that `best_common_ancestor` and `example_iris`. Matching is lexical |
@@ -90,13 +91,13 @@ G = load_network("ontometer-corpus/data")  # networkx.MultiDiGraph
 | `abstractness_growth.parquet` | ontology | Birth, first specialisation and dependency counts under two dating rules (`*_bounded`, `*_first_evidence`) |
 | `dating_cache.jsonl` | lookup | Cached web-archive and Wikidata answers behind `ontology_dates`, so dating reruns offline |
 | `redistribution.yaml` | — | Which declared licences allow the raw files to be republished |
-| `dedup_review.csv` | pair of copies | Hand verdicts (`same`, `part` for a module or variant, `distinct`) on the merges deduplication made that the registries' names do not confirm, and on pairs it kept apart that share an acronym, title or ontology IRI; OntoMeter's `research/dedup_audit.py` scores deduplication against them |
+| `dedup_review.csv` | pair of copies | Hand verdicts (`same`, `part` for a module or variant, `distinct`) on the merges deduplication made that the registries' names do not confirm, and on pairs it kept apart that share an acronym, title or ontology IRI; `ontometer-corpus paper dedup-audit` scores deduplication against them |
 | `zenodo.yaml` | — | Metadata for the archived release of the raw files |
 
 Definitions of the abstractness and dependency measures:
-[Abstractness](https://growgraph.github.io/OntoMeter/corpus/abstractness/). Dates:
-[Dates](https://growgraph.github.io/OntoMeter/corpus/dates/). Node and edge model:
-[Network](https://growgraph.github.io/OntoMeter/corpus/network/).
+[Abstractness](https://growgraph.github.io/ontometer-corpus/abstractness/). Dates:
+[Dates](https://growgraph.github.io/ontometer-corpus/dates/). Node and edge model:
+[Network](https://growgraph.github.io/ontometer-corpus/network/).
 
 ## How the tables join
 
@@ -172,8 +173,8 @@ for n in corpus:
         G.nodes[n]["max_depth"] = metrics.at[fh, "max_depth_long"]
 ```
 
-or read `ontology_metrics.parquet`, which already joins them per node. OntoMeter's
-`ontometer.corpus.ontology_metrics.load_views` builds the network as those metrics are measured
+or read `ontology_metrics.parquet`, which already joins them per node.
+`ontometer_corpus.ontology_metrics.load_views` builds the network as those metrics are measured
 on it: SKOS-dominated sources removed, a full and a logical-reuse view, every edge weighted by
 how rare its target is (`idf_weight`).
 
@@ -198,13 +199,13 @@ Nodes are `onto` indices (join `family`, `node_id` or `source_id` from `onto` fo
 **Over time.** With `ontology_dates.parquet`, these two tables are enough to rebuild G(t), the
 specialisation network as it stood at any date, without the raw files. Each ontology is placed
 at its first-evidence birth and each pair at its first observed assertion (or, when that is
-unknown, the child's birth, and never before the parent's). OntoMeter does the placing:
+unknown, the child's birth, and never before the parent's). The package does the placing:
 
 ```python
 import numpy as np
 import pandas as pd
-from ontometer.corpus.growth_network import load_tracked
-from ontometer.corpus.paths import CorpusPaths
+from ontometer_corpus.growth_network import load_tracked
+from ontometer_corpus.paths import CorpusPaths
 
 net = load_tracked(CorpusPaths.resolve("ontometer-corpus/data"))
 t = (pd.Timestamp("2015-01-01") - pd.Timestamp("1970-01-01")).days   # times are days since 1970
@@ -219,7 +220,7 @@ G_t.add_edges_from(net.dep.loc[arrival <= t, ["child", "parent"]].itertuples(ind
 
 Dated coverage is incomplete and uneven across registries (an undated ontology has a `NaN`
 birth); report it alongside any result over time. The interactive version is the
-[abstractness race](https://growgraph.github.io/OntoMeter/corpus/growth/).
+[abstractness race](https://growgraph.github.io/ontometer-corpus/growth/).
 
 ## The registry database, `corpus.db`
 
@@ -266,37 +267,47 @@ be checked against it.
 - The others are fetched again from their `canonical_url`, and kept only if the bytes still
   match `file_hash`.
 
-OntoMeter does both (`run/store.py pull`, `fetch-withheld`, `verify`); see
-[Object store](https://growgraph.github.io/OntoMeter/corpus/store/).
+`ontometer-corpus store` does both (`pull`, `fetch-withheld`, `verify`); see
+[Object store](https://growgraph.github.io/ontometer-corpus/store/).
 
 The tables here are enough to study the networks and metrics; the raw files are needed only to
 recompute them or to go down to individual terms.
+<!-- --8<-- [end:tables] -->
 
-## Working with OntoMeter
+## The package
 
-```bash
-pip install "ontometer[corpus]"          # the loaders
-git clone https://github.com/growgraph/OntoMeter   # the pipeline (run/ scripts)
-```
+`ontometer-corpus` is on PyPI. The base install is small (the namespace rules and path
+resolution); each part of the work is an extra:
 
-OntoMeter reads this directory as its *corpus directory*, passed as `--corpus` or
+| Install | For |
+|---|---|
+| `pip install ontometer-corpus` | the namespace rules (`ontometer_corpus.namespaces`) and path resolution |
+| `pip install "ontometer-corpus[tables]"` | loading the tables and the networks |
+| `pip install "ontometer-corpus[build]"` | rebuilding the tables from the raw files |
+| `pip install "ontometer-corpus[store]"` | getting, checking and publishing the object store |
+| `pip install "ontometer-corpus[validation]"` | the abstractness validation step |
+| `pip install "ontometer-corpus[paper]"` | the figures, tables and numbers of the paper |
+
+The package reads this directory as its *corpus directory*, passed as `--corpus` or
 `ONTOMETER_CORPUS`, and the object store as `--store` or `ONTOMETER_STORE`:
 
 ```bash
 export ONTOMETER_CORPUS=/path/to/ontometer-corpus/data
 export ONTOMETER_STORE=/path/to/ontometer-store
-run/rebuild.sh --out /tmp/figures          # every derived table, from parse to G(t); never fetches
+ontometer-corpus --help                         # one subcommand per derivation step
+ontometer-corpus rebuild --out /tmp/rebuild     # every derived table, from parse to G(t); never fetches
+ontometer-corpus paper figures --out /tmp/fig   # the paper's figures and \stat numbers
 ```
 
 | Python | Returns |
 |---|---|
-| `ontometer.corpus.network.construction.load_network(dir)` | the dependency network, `networkx.MultiDiGraph` |
-| `ontometer.corpus.ontology_metrics.load_views(paths)` | the network as the metrics see it (full and logical-reuse views) |
-| `ontometer.corpus.growth_network.load_tracked(paths)` | the specialisation network placed in time |
-| `ontometer.corpus.paths.CorpusPaths.resolve(dir, store)` | `paths` for the calls above |
+| `ontometer_corpus.network.construction.load_network(dir)` | the dependency network, `networkx.MultiDiGraph` |
+| `ontometer_corpus.ontology_metrics.load_views(paths)` | the network as the metrics see it (full and logical-reuse views) |
+| `ontometer_corpus.growth_network.load_tracked(paths)` | the specialisation network placed in time |
+| `ontometer_corpus.paths.CorpusPaths.resolve(dir, store)` | `paths` for the calls above |
 
-The pipeline, stage by stage, and what can and cannot be reproduced:
-[Corpus](https://growgraph.github.io/OntoMeter/corpus/).
+The pipeline stage by stage, what a rebuild does and does not reproduce, and how to regenerate
+the paper: [documentation](https://growgraph.github.io/ontometer-corpus/).
 
 **This is a snapshot.** Registries change, so a new crawl gives a different corpus, not this
 one. That is why these tables are versioned rather than regenerated: `manifest.jsonl` records
@@ -304,19 +315,20 @@ exactly what was captured, and when.
 
 ## Versions, citing, licence
 
-A corpus version is a commit of this repository; releases are tags (`git tag`), archived on
+A corpus version is a commit of this repository; table releases are `corpus-YYYY-MM` tags, archived on
 Zenodo: [10.5281/zenodo.24404202](https://doi.org/10.5281/zenodo.24404202) resolves to the
 latest release, and each release has its own DOI (`corpus-2026-08`:
 [10.5281/zenodo.24404203](https://doi.org/10.5281/zenodo.24404203)). `corpus-2026-08.1` is the
 same crawl with revised deduplication. Name the
-commit or tag when you report results, and the OntoMeter version that read it.
+commit or tag when you report results, and the `ontometer-corpus` version that read it. Package
+releases are tagged `vX.Y.Z` and listed in [CHANGELOG.md](CHANGELOG.md).
 
 Authors: Alexander Belikov (GrowGraph) and David Bareham (CESDIP, CY Cergy Paris Université).
 
 ### Licence
 
 The tables in `data/` are © 2025–2026 Alexander Belikov and David Bareham, released under the
-[Creative Commons Attribution 4.0 International licence](LICENSE) (CC BY 4.0). You may share
+[Creative Commons Attribution 4.0 International licence](data/LICENSE) (CC BY 4.0). You may share
 and adapt them for any purpose if you credit the corpus: cite it as in
 [CITATION.cff](CITATION.cff) and name the commit or tag you used.
 
@@ -337,8 +349,8 @@ Links to each registry's terms and the citation it asks for are in
 [`data/redistribution.yaml`](data/redistribution.yaml) under `registry_metadata`.
 
 The ontology files the tables describe are not included here and keep their own licences (see
-[The raw files](#the-raw-files)). The code that builds the tables,
-[OntoMeter](https://github.com/growgraph/OntoMeter), is Apache-2.0.
+[The raw files](#the-raw-files)). The code in this repository (`ontometer_corpus/`, `test/`,
+`docs/`) is released under the [Apache License 2.0](LICENSE); see [NOTICE](NOTICE).
 
 ### Contributing
 

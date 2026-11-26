@@ -1,0 +1,139 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[project]
+authors = [
+  {name = "Alexander Belikov", email = "alexander@growgraph.dev"},
+  {name = "David Bareham", email = "d.bareham@liverpool.ac.uk"},
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+]
+# The base install is the namespace rules, path resolution and the CLI shell: light
+# enough to be a dependency of a single-ontology tool. Everything else is an extra.
+# Every range carries an upper bound - the floor names the major developed against,
+# the ceiling stops the next one.
+dependencies = [
+  "click>=8.1,<9",
+]
+description = "The OntoMeter Corpus of public ontologies: derivation pipeline, table loaders and paper analysis"
+keywords = ["ontology", "corpus", "owl", "rdf", "semantic-web", "ontology-reuse"]
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+name = "ontometer-corpus"
+readme = "README.md"
+requires-python = ">=3.11"
+version = "0.1.0"
+
+[project.optional-dependencies]
+# Read the tables and the dependency network.
+tables = [
+  "networkx>=3.2,<4",
+  "numpy>=1.26,<3",
+  "pandas>=2.2,<3",
+  "pyarrow>=17.0,<26",
+]
+# Derive the tables from the raw files: fetch, parse, dedup, networks, dates, G(t).
+build = [
+  "beautifulsoup4>=4.12,<5",
+  "matplotlib>=3.9,<4",
+  "ontometer-corpus[tables]",
+  "owlready2>=0.47,<1",
+  "pyoxigraph>=0.5.11,<0.6",
+  "pyyaml>=6.0,<7",
+  "rdflib>=7.0,<9",
+  "requests>=2.32,<3",
+  "scipy>=1.11,<2",
+  "suthing>=0.6.1,<0.7",
+]
+# Exchange and publish the object store: Hugging Face dataset remotes, zstd bundles.
+store = [
+  "huggingface-hub>=2.1,<3",
+  "ontometer-corpus[build]",
+  "zstandard>=0.25,<1",
+]
+# The abstractness validation step (WordNet through nltk, when its data is installed).
+validation = [
+  "nltk>=3.8,<4",
+  "ontometer-corpus[build]",
+  "powerlaw>=1.5,<3",
+]
+# Figures, tables and numbers of the resource paper.
+paper = [
+  "diptest>=0.10,<1",
+  "ontometer-corpus[build]",
+  "powerlaw>=1.5,<3",
+  "seaborn>=0.13,<1",
+]
+all = ["ontometer-corpus[store,validation,paper]"]
+# Documentation site: `uv run properdocs serve`. The API reference is generated from
+# docstrings at build time (docs/_build/gen_pages.py).
+docs = [
+  "mkdocs-gen-files>=0.5,<1",
+  "mkdocs-glightbox>=0.4,<1",
+  "mkdocs-literate-nav>=0.6,<1",
+  "mkdocs-material>=9.6,<10",
+  "mkdocstrings[python]>=0.29,<1",
+  "ontometer-corpus[tables]",
+  "properdocs>=1.6.7,<2",
+  # Later releases require the `md` argument in the Highlight constructor mkdocstrings 0.30 calls.
+  "pymdown-extensions>=10,<12.2",
+]
+
+[dependency-groups]
+dev = [
+  "pre-commit>=4.0",
+  "pytest>=8.0",
+  "ty>=0.0.14",
+]
+
+[project.scripts]
+ontometer-corpus = "ontometer_corpus.cli:cli"
+
+[project.urls]
+Documentation = "https://growgraph.github.io/ontometer-corpus/"
+Homepage = "https://github.com/growgraph/ontometer-corpus"
+Issues = "https://github.com/growgraph/ontometer-corpus/issues"
+Repository = "https://github.com/growgraph/ontometer-corpus"
+
+[tool.hatch.build.targets.sdist]
+# Explicit allowlist: the tables in data/ are versioned in this repository and
+# released separately; they never ship in a distribution.
+include = [
+  "/CHANGELOG.md",
+  "/LICENSE",
+  "/NOTICE",
+  "/README.md",
+  "/ontometer_corpus",
+  "/pyproject.toml",
+  "/test",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["ontometer_corpus"]
+
+[tool.pytest.ini_options]
+addopts = ["--strict-markers"]
+testpaths = ["test"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+ignore = ["E501"]
+select = ["E", "F", "I001", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+# These modules check for their extra before their third-party imports.
+"ontometer_corpus/{dating,growth_network,ontology_metrics,roles}.py" = ["E402"]
+"ontometer_corpus/steps/abstractness_validation.py" = ["E402"]

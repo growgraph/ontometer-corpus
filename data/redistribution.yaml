@@ -1,7 +1,7 @@
 # Which objects the public copy of the object store may include
-# (`run/store.py licenses`, `run/store.py publish`).
+# (`ontometer-corpus store licenses`, `ontometer-corpus store publish`).
 #
-# Licence ids come from ontometer.corpus.store.licence.normalise_licence; the
+# Licence ids come from ontometer_corpus.store.licence.normalise_licence; the
 # lists hold glob patterns. An object is withheld if any of its recognised
 # licences matches `withhold`, published if one matches `redistribute`, and
 # otherwise decided by `unrecognised` (licences outside both lists, including
