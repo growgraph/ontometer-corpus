@@ -8,7 +8,6 @@ on:
         -   'properdocs.yml'
         -   'ontometer_corpus/**'
         -   'README.md'
-        -   'CHANGELOG.md'
     workflow_dispatch:
 
 permissions:

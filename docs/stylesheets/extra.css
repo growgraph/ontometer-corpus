@@ -376,3 +376,22 @@ body {
   border-color: var(--om-mark);
   box-shadow: none;
 }
+
+/* Figures span the text column, caption included. */
+
+.md-typeset figure {
+  margin: 2rem 0;
+  width: 100%;
+}
+
+.md-typeset figure img {
+  border-radius: 0.3rem;
+  box-shadow: 0 0.1rem 0.6rem var(--om-rule);
+  width: 100%;
+}
+
+.md-typeset figcaption {
+  font-size: 0.72rem;
+  line-height: 1.5;
+  max-width: none;
+}

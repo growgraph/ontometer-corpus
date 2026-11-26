@@ -76,20 +76,19 @@ nav:
 -   Home: index.md
 -   Install and use: getting_started.md
 -   The tables: tables.md
+-   Measures:
+    -   Abstractness: abstractness.md
+    -   Dates: dates.md
+    -   Abstractness race: growth.md
 -   Pipeline:
     -   Overview: overview.md
     -   Fetch, parse, dedup: pipeline.md
     -   Object store: store.md
     -   Dependency network: network.md
     -   Rebuilding: rebuild.md
--   Measures:
-    -   Abstractness: abstractness.md
-    -   Dates: dates.md
-    -   Abstractness race: growth.md
 -   The paper: paper.md
 -   API reference: reference/
 -   Contributing: contributing.md
--   Changelog: changelog.md
 markdown_extensions:
 -   pymdownx.highlight:
         anchor_linenums: true

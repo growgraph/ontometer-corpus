@@ -1,5 +1,9 @@
 # Install and use
 
+The tables can be read with nothing but `pandas`; the package saves you the parsing and adds
+the commands that rebuild the tables and the paper. This page installs only the parts you need,
+points every command at the data, and loads the dependency network in a few lines.
+
 ## Install
 
 The base install is small: the namespace rules and path resolution. Each part of the work is

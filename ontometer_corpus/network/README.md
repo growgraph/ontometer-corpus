@@ -156,7 +156,7 @@ external.
 
 Only the representation languages are set apart, by specification rather than popularity:
 RDF, RDFS, XSD, the XML namespace, OWL, SWRL, the OBO-format mapping (oboInOwl) and Protégé's
-bookkeeping (`LANGUAGE_NAMESPACES` in `ontometer/onto/namespaces.py`). They are never owned:
+bookkeeping (`LANGUAGE_NAMESPACES` in `ontometer_corpus/namespaces.py`). They are never owned:
 using `rdf:type` is writing in a language, not reusing an ontology. The parse phase removes
 them, and the bare OBO root, from every row's `own_namespaces` (`UNOWNABLE_NAMESPACES`), and
 their usage edges point at external nodes labelled `language`.
@@ -168,7 +168,7 @@ A usage edge that resolves back to its own source is dropped: an ontology using 
 would otherwise loop onto itself.
 
 **OBO term IDs** are handled one level down, in `iri_namespace`
-(`ontometer/onto/namespaces.py`). `GO_0008150`, `CHEBI_36357` and `CL_0000000` share the path
+(`ontometer_corpus/namespaces.py`). `GO_0008150`, `CHEBI_36357` and `CL_0000000` share the path
 `http://purl.obolibrary.org/obo/`; their identity is the `PREFIX_` in the local name. Well-formed
 `PREFIX_localid` names get their own namespace (`.../obo/GO_`, `.../obo/CHEBI_`), and the bare
 OBO root is excluded from every ontology's `own_namespaces`, since no single ontology owns it.

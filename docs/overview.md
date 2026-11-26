@@ -1,5 +1,8 @@
 # Overview
 
+The tables are derived, not curated by hand: a fixed sequence of steps turns registry downloads
+into every file in `data/`, so any number can be traced back to the files and rules behind it.
+
 The pipeline fetches ontologies from ten registries, parses and deduplicates them, builds the
 dependency network between them, and measures the abstractness of their terms and how the
 network of ontologies grows. This page is the map: which command writes which table, where the

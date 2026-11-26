@@ -286,7 +286,7 @@ class Corpus:
                            WHEN c.parse_status = 'ok' THEN 'Parsed'
                            WHEN c.parse_status = 'fail' THEN 'Parse failed'
                            WHEN c.parse_status IN ('feed', 'unsupported', 'missing')
-                               THEN 'Skipped'
+                               THEN 'Unsupported'
                            ELSE 'Awaiting parse'
                        END AS outcome
                 FROM attempts AS a
@@ -381,7 +381,7 @@ def fig_corpus_composition(c: Corpus) -> plt.Figure:
         "Fetch failed": STATUS_CRITICAL,
         "Fetched, not registered": STATUS_CRITICAL,
         "Parse failed": STATUS_SERIOUS,
-        "Skipped": STATUS_WARNING,
+        "Unsupported": STATUS_WARNING,
         "Awaiting parse": TEXT_MUTED,
     }
     columns = [*failure_colors, "Parsed"]
@@ -1291,7 +1291,7 @@ def comparator_table(c: Corpus) -> str:
 
 
 def fig_declared_vs_actual(c: Corpus) -> plt.Figure:
-    """(ontology, corpus ontology) reuse pairs: declared and used, silent, vestigial."""
+    """(ontology, corpus ontology) reuse pairs: hard (imported and used), soft (used, never imported), vestigial."""
     declared: dict[str, set[str]] = defaultdict(set)
     used: dict[str, set[str]] = defaultdict(set)
     imports_anything: dict[str, bool] = defaultdict(bool)
@@ -1301,13 +1301,13 @@ def fig_declared_vs_actual(c: Corpus) -> plt.Figure:
         if c.g.nodes[v].get("is_external"):
             continue
         (declared if d["edge_type"] == "import" else used)[u].add(v)
-    totals = {"declared & used": 0, "silent": 0, "vestigial": 0}
+    totals = {"hard reuse": 0, "soft reuse": 0, "vestigial": 0}
     importers = dict(totals)
     for n in c.corpus_nodes:
         d_set, u_set = declared.get(n, set()), used.get(n, set())
         row = {
-            "declared & used": len(d_set & u_set),
-            "silent": len(u_set - d_set),
+            "hard reuse": len(d_set & u_set),
+            "soft reuse": len(u_set - d_set),
             "vestigial": len(d_set - u_set),
         }
         for k, v in row.items():
@@ -1354,20 +1354,22 @@ def fig_declared_vs_actual(c: Corpus) -> plt.Figure:
     fig.tight_layout()
     n = sum(totals.values())
     c.stats["reusepairs"] = fmt_int(n)
-    c.stats["consistentshare"] = fmt_pct(totals["declared & used"] / n * 100)
-    c.stats["silentshare"] = fmt_pct(totals["silent"] / n * 100)
+    c.stats["consistentshare"] = fmt_pct(totals["hard reuse"] / n * 100)
+    c.stats["silentshare"] = fmt_pct(totals["soft reuse"] / n * 100)
     c.stats["vestigialshare"] = fmt_pct(totals["vestigial"] / n * 100)
-    c.stats["importersilentshare"] = fmt_pct(importers["silent"] / sum(importers.values()) * 100)
+    c.stats["importersilentshare"] = fmt_pct(
+        importers["soft reuse"] / sum(importers.values()) * 100
+    )
 
     # The same split within LOV alone, the population of the earlier LOV studies.
     lov = {n for n in c.corpus_nodes if c.home[n] == "LOV"}
-    lov_totals = {"declared & used": 0, "silent": 0, "vestigial": 0}
+    lov_totals = {"hard reuse": 0, "soft reuse": 0, "vestigial": 0}
     lov_importers = dict(lov_totals)
     for node in lov:
         d_set, u_set = declared.get(node, set()) & lov, used.get(node, set()) & lov
         row = {
-            "declared & used": len(d_set & u_set),
-            "silent": len(u_set - d_set),
+            "hard reuse": len(d_set & u_set),
+            "soft reuse": len(u_set - d_set),
             "vestigial": len(d_set - u_set),
         }
         for k, v in row.items():
@@ -1376,9 +1378,9 @@ def fig_declared_vs_actual(c: Corpus) -> plt.Figure:
                 lov_importers[k] += v
     lov_n = sum(lov_totals.values())
     c.stats["lovpairs"] = fmt_int(lov_n)
-    c.stats["lovsilentshare"] = fmt_pct(lov_totals["silent"] / lov_n * 100)
+    c.stats["lovsilentshare"] = fmt_pct(lov_totals["soft reuse"] / lov_n * 100)
     c.stats["lovimportersilentshare"] = fmt_pct(
-        lov_importers["silent"] / sum(lov_importers.values()) * 100
+        lov_importers["soft reuse"] / sum(lov_importers.values()) * 100
     )
     c.stats["lovnoimportshare"] = fmt_pct(
         sum(not imports_anything[n] for n in lov) / len(lov) * 100
@@ -1446,7 +1448,7 @@ def fig_registry_reuse(c: Corpus) -> plt.Figure:
 
 
 def fig_coupling_ratio(c: Corpus) -> plt.Figure:
-    """Term-level coupling ratio, and against the namespace-level external dependency ratio."""
+    """Term-level coupling ratio, and against the share of namespaces owned by others."""
     p4 = c.p4
     cr = p4.loc[p4["ontology_iri"].notna(), "coupling_ratio"].dropna()
     ns = cr.index.to_series().map(c.external_ratio)
@@ -1457,7 +1459,7 @@ def fig_coupling_ratio(c: Corpus) -> plt.Figure:
         cr, bins=numpy.linspace(0, 1, 26), color=KIND_PALETTE[0], edgecolor=SURFACE, linewidth=0.4
     )
     reference_line(ax, cr.median())
-    ax.set_xlabel("coupling ratio (0 self-contained, 1 pure bridge)")
+    ax.set_xlabel("coupling ratio\n(0 self-contained, 1 fully borrowed)")
     ax.set_ylabel("ontologies")
     panel(ax, "a", "term-level coupling")
 
@@ -1481,7 +1483,7 @@ def fig_coupling_ratio(c: Corpus) -> plt.Figure:
     cb.set_label("ontologies", fontsize=6)
     cb.ax.tick_params(labelsize=5, length=1.5)
     cb.outline.set_visible(False)
-    ax.set_xlabel("namespace-level external dependency ratio")
+    ax.set_xlabel("share of namespaces owned by others")
     ax.set_ylabel("term-level coupling ratio")
     panel(ax, "b", "terms against namespaces")
     fig.tight_layout(w_pad=1.5)

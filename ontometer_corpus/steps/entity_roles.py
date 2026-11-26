@@ -282,7 +282,7 @@ def build(paths: CorpusPaths, limit: int | None, workers: int, force: bool, pane
 )
 @click.option("--force", is_flag=True, help="Recompute ontologies already done.")
 @click.option(
-    "--panel", is_flag=True, help="Process the releases chosen by abstractness_panel.py select."
+    "--panel", is_flag=True, help="Process the releases chosen by `ontometer-corpus panel select`."
 )
 @corpus_paths
 def main(limit: int | None, workers: int, force: bool, panel: bool, paths: CorpusPaths) -> None:
