@@ -1,0 +1,56 @@
+name: Build GitHub Pages
+on:
+    push:
+        branches:
+        -   main
+        paths:
+        -   'docs/**'
+        -   'properdocs.yml'
+        -   'ontometer_corpus/**'
+        -   'README.md'
+        -   'CHANGELOG.md'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+concurrency:
+    group: pages
+    cancel-in-progress: true
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+        -   name: Checkout code
+            uses: actions/checkout@v5
+        -   name: Set up Python
+            uses: actions/setup-python@v5
+            with:
+                python-version: '3.11'
+        -   name: Install uv
+            uses: astral-sh/setup-uv@v7
+        -   name: Install dependencies
+            run: uv sync --extra docs
+        -   name: Build site
+            # The G(t) view's data is built from the tables in data/.
+            env:
+                ONTOMETER_CORPUS: data
+            run: uv run properdocs build --strict --site-dir _site
+        -   name: Upload Pages artifact
+            uses: actions/upload-pages-artifact@v3
+            with:
+                path: _site
+
+    deploy:
+        needs: build
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
+        steps:
+        -   name: Deploy to GitHub Pages
+            id: deployment
+            uses: actions/deploy-pages@v4

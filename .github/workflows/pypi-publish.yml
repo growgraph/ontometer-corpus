@@ -1,0 +1,49 @@
+name: Upload Python Package to PyPI
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  pypi-publish:
+    # Table releases are tagged corpus-YYYY-MM and publish nothing to PyPI.
+    if: startsWith(github.ref_name, 'v')
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/ontometer-corpus
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.9.28"
+      # Publishing a version nobody tagged lets the release tag and the PyPI
+      # version drift apart unnoticed, so refuse to build on a mismatch.
+      - name: Verify tag matches pyproject version
+        run: |
+          project_version="$(uv version --short)"
+          tag_version="${GITHUB_REF_NAME#v}"
+          echo "pyproject: ${project_version} / tag: ${tag_version}"
+          if [ "${project_version}" != "${tag_version}" ]; then
+            echo "::error::Release tag ${GITHUB_REF_NAME} does not match pyproject version ${project_version}"
+            exit 1
+          fi
+      - name: Build and publish
+        run: |
+          uv build
+          uv publish
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}

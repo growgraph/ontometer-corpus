@@ -1,4 +1,4 @@
-# Zenodo metadata for the archived bundles of a corpus version (`run/store.py zenodo`).
+# Zenodo metadata for the archived bundles of a corpus version (`ontometer-corpus store zenodo`).
 # The tool creates a draft with this metadata (version = the corpus tag); review the
 # draft in the Zenodo web interface and publish it there.
 
