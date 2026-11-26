@@ -36,3 +36,23 @@ def test_base_modules_import_without_the_heavy_stack() -> None:
     )
     out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert out.stdout.strip() == "[]"
+
+
+#: What the `tables` extra must not need: the rebuild stack of the `build` extra.
+BUILD_ONLY = ("rdflib", "pyoxigraph", "owlready2", "requests", "bs4", "suthing", "matplotlib")
+
+#: The modules a `tables` install uses: the loaders and the G(t) view the docs build.
+TABLES_MODULES = (
+    "ontometer_corpus.network.construction",
+    "ontometer_corpus.ontology_metrics",
+    "ontometer_corpus.growth_network",
+)
+
+
+def test_table_loaders_import_without_the_build_stack() -> None:
+    code = (
+        f"import sys; import {', '.join(TABLES_MODULES)}; "
+        f"print(sorted(m for m in {BUILD_ONLY!r} if m in sys.modules))"
+    )
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
+    assert out.stdout.strip() == "[]"

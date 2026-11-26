@@ -41,7 +41,7 @@ import pandas as pd
 from ontometer_corpus.namespaces import reference_kind
 from ontometer_corpus.network.construction import load_network
 from ontometer_corpus.paths import CorpusPaths
-from ontometer_corpus.roles import SKOS_DOMINATED_KINDS
+from ontometer_corpus.role_names import SKOS_DOMINATED_KINDS
 
 #: Display name per metric column, for tables and figures.
 METRIC_LABELS: dict[str, str] = {

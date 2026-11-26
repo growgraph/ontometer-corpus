@@ -57,13 +57,8 @@ from ontometer_corpus.network.entities import (
 )
 from ontometer_corpus.paths import CorpusPaths, corpus_paths
 from ontometer_corpus.registries import home_registry_sql
-from ontometer_corpus.roles import (
-    CLASS_ROLES,
-    INSTANCE_ROLES,
-    SKOS_CONCEPT_ROLE,
-    SKOS_DOMINATED_KINDS,
-    is_meta,
-)
+from ontometer_corpus.role_names import SKOS_CONCEPT_ROLE, SKOS_DOMINATED_KINDS
+from ontometer_corpus.roles import CLASS_ROLES, INSTANCE_ROLES, is_meta
 from ontometer_corpus.versions import family_key, release_date, release_order
 
 F_DECL_CLASS, F_DECL_IND, F_DECL_PROP, F_CLASS, F_INST = 1, 2, 4, 8, 16
@@ -94,7 +89,7 @@ def _ontologies(paths: CorpusPaths) -> pd.DataFrame:
         conn,
     )
     # SKOS thesauri have no OWL class hierarchy for this network to measure;
-    # they stay in the dependency network (roles.SKOS_DOMINATED_KINDS).
+    # they stay in the dependency network (role_names.SKOS_DOMINATED_KINDS).
     df = df[~df.kind.isin(SKOS_DOMINATED_KINDS)].drop(columns="kind")
     # An IRI dedup found shared by distinct ontologies names none of them, so
     # it cannot win a namespace (entities.iri_names_namespace).

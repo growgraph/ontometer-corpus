@@ -564,7 +564,7 @@ def test_namespace_counts_read_roles_only_for_rows_that_may_have_concepts(tmp_pa
 
     from ontometer_corpus.network.construction import _namespace_counts
     from ontometer_corpus.paths import CorpusPaths
-    from ontometer_corpus.roles import SKOS_CONCEPT_ROLE
+    from ontometer_corpus.role_names import SKOS_CONCEPT_ROLE
 
     paths = CorpusPaths(corpus_dir=tmp_path / "data", store_dir=tmp_path / "store")
     h = "ab" + "0" * 62

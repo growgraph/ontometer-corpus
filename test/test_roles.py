@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import rdflib
 
-from ontometer_corpus.roles import SKOS_CONCEPT_ROLE, roles_from_graph, roles_from_obo, summarise
+from ontometer_corpus.role_names import SKOS_CONCEPT_ROLE
+from ontometer_corpus.roles import roles_from_graph, roles_from_obo, summarise
 
 EX = "http://example.org/zoo#"
 

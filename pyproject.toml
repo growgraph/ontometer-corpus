@@ -35,12 +35,14 @@ requires-python = ">=3.11"
 version = "0.1.0"
 
 [project.optional-dependencies]
-# Read the tables and the dependency network.
+# Read the tables and the dependency network, and build the G(t) view from them
+# (scipy: the DAG closure that counts specialisers).
 tables = [
   "networkx>=3.2,<4",
   "numpy>=1.26,<3",
   "pandas>=2.2,<3",
   "pyarrow>=17.0,<26",
+  "scipy>=1.11,<2",
 ]
 # Derive the tables from the raw files: fetch, parse, dedup, networks, dates, G(t).
 build = [
@@ -52,7 +54,6 @@ build = [
   "pyyaml>=6.0,<7",
   "rdflib>=7.0,<9",
   "requests>=2.32,<3",
-  "scipy>=1.11,<2",
   "suthing>=0.6.1,<0.7",
 ]
 # Exchange and publish the object store: Hugging Face dataset remotes, zstd bundles.

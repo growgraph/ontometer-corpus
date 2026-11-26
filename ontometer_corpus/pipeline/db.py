@@ -173,7 +173,7 @@ def get_connection(db_path: Path) -> sqlite3.Connection:
 #   'mostly_skos'  at least as many SKOS concepts as classes;
 #   'mostly_owl'   fewer SKOS concepts than classes (an OWL ontology with a
 #                  code list).
-# The first two SKOS kinds are SKOS-dominated (roles.SKOS_DOMINATED_KINDS):
+# The first two SKOS kinds are SKOS-dominated (role_names.SKOS_DOMINATED_KINDS):
 # included in the corpus inventory and the dependency network, excluded from
 # the hierarchy-based analyses, which assume an OWL class hierarchy.
 _KIND_SQL = (

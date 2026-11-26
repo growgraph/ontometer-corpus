@@ -146,7 +146,7 @@ def _has_skos_concept_roles(path: Path) -> bool:
         return False
     import pyarrow.parquet as pq
 
-    from ontometer_corpus.roles import SKOS_CONCEPT_ROLE
+    from ontometer_corpus.role_names import SKOS_CONCEPT_ROLE
 
     objects = pq.read_table(path, columns=["object"])["object"]
     return SKOS_CONCEPT_ROLE in objects.to_pylist()

@@ -66,7 +66,7 @@ import networkx as nx
 from ontometer_corpus.namespaces import reference_kind
 from ontometer_corpus.paths import CorpusPaths, corpus_paths
 from ontometer_corpus.registries import home_registry_sql
-from ontometer_corpus.roles import SKOS_CONCEPT_ROLE
+from ontometer_corpus.role_names import SKOS_CONCEPT_ROLE
 
 
 def _as_paths(value: CorpusPaths | Path | str | None) -> CorpusPaths:

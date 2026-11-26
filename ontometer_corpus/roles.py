@@ -52,6 +52,7 @@ from rdflib import OWL, RDF, RDFS, SKOS, URIRef
 from rdflib.term import Literal
 
 from ontometer_corpus.namespaces import LANGUAGE_NAMESPACES
+from ontometer_corpus.role_names import SKOS_CONCEPT_ROLE
 from ontometer_corpus.usage import LOGICAL, UsageContext
 
 if TYPE_CHECKING:
@@ -61,7 +62,6 @@ CLASS_ROLES: frozenset[str] = frozenset(
     {"decl_class", "sub_child", "sub_parent", "has_instance", "axiom_ref"}
 )
 INSTANCE_ROLES: frozenset[str] = frozenset({"decl_individual", "typed", "fact_subj", "fact_obj"})
-SKOS_CONCEPT_ROLE = "skos_concept"
 
 #: Namespaces whose terms describe the modelling language or the editing
 #: tools, not the domain: :data:`ontometer_corpus.namespaces.LANGUAGE_NAMESPACES`.
@@ -270,14 +270,6 @@ def roles_from_obo(
 def summarise(roles: dict[str, set[str]]) -> dict[str, tuple[bool, bool]]:
     """``iri -> (plays a class role, plays an instance role)``."""
     return {iri: (bool(rs & CLASS_ROLES), bool(rs & INSTANCE_ROLES)) for iri, rs in roles.items()}
-
-
-#: Values of corpus_registry.kind for sources whose vocabulary is mostly SKOS
-#: concepts rather than OWL/RDFS classes (pipeline.db._KIND_SQL). They stay in
-#: the corpus inventory and the dependency network, and are excluded from the
-#: hierarchy-based analyses (term network, G(t), structural metrics,
-#: clustering), which assume an OWL class hierarchy.
-SKOS_DOMINATED_KINDS: tuple[str, ...] = ("thesaurus", "mostly_skos")
 
 
 def kb_individuals(

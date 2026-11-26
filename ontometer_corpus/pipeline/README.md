@@ -216,7 +216,7 @@ Each file is read from disk once and reused for every step:
 - **Kind**: `kind`, a generated column computed from the class and SKOS concept counts:
   `no_skos`, `thesaurus` (SKOS concepts, no classes), `mostly_skos` (at least as many concepts
   as classes) or `mostly_owl`. The first two SKOS kinds are SKOS-dominated
-  (`ontometer_corpus.roles.SKOS_DOMINATED_KINDS`): they stay in the corpus inventory and the
+  (`ontometer_corpus.role_names.SKOS_DOMINATED_KINDS`): they stay in the corpus inventory and the
   dependency network, and are excluded from the hierarchy-based analyses (term network, G(t),
   structural metrics, clustering), which assume an OWL class hierarchy.
 - **Namespace footprint** for the dependency network: `referenced_namespaces`, the namespaces

@@ -1528,6 +1528,8 @@ docs = [
     { name = "properdocs" },
     { name = "pyarrow" },
     { name = "pymdown-extensions" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 paper = [
     { name = "beautifulsoup4" },
@@ -1577,6 +1579,8 @@ tables = [
     { name = "numpy", version = "2.5.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "pandas" },
     { name = "pyarrow" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 validation = [
     { name = "beautifulsoup4" },
@@ -1638,7 +1642,7 @@ requires-dist = [
     { name = "pyyaml", marker = "extra == 'build'", specifier = ">=6.0,<7" },
     { name = "rdflib", marker = "extra == 'build'", specifier = ">=7.0,<9" },
     { name = "requests", marker = "extra == 'build'", specifier = ">=2.32,<3" },
-    { name = "scipy", marker = "extra == 'build'", specifier = ">=1.11,<2" },
+    { name = "scipy", marker = "extra == 'tables'", specifier = ">=1.11,<2" },
     { name = "seaborn", marker = "extra == 'paper'", specifier = ">=0.13,<1" },
     { name = "suthing", marker = "extra == 'build'", specifier = ">=0.6.1,<0.7" },
     { name = "zstandard", marker = "extra == 'store'", specifier = ">=0.25,<1" },
