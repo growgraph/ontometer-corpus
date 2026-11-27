@@ -1,16 +1,16 @@
 name: Upload Python Package to PyPI
 
+# A pushed v* tag publishes, with no GitHub Release: Zenodo archives every GitHub Release
+# as a version of the dataset record, and package releases must not land there.
 on:
-  release:
-    types: [published]
+  push:
+    tags: ['v*']
 
 permissions:
   contents: read
 
 jobs:
   pypi-publish:
-    # Table releases are tagged corpus-YYYY-MM and publish nothing to PyPI.
-    if: startsWith(github.ref_name, 'v')
     runs-on: ubuntu-latest
     environment:
       name: pypi

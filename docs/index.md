@@ -37,8 +37,9 @@ the network grew over time.
 
 ## What the repository holds
 
-- **The tables**, in `data/`, versioned in git and released as `corpus-YYYY-MM` tags. They are
-  plain Parquet, SQLite, JSON Lines and TSV, so reading them needs no package.
+- **The tables**, in `data/`, versioned in git and released as `corpus-YYYY-MM` tags;
+  `data/release.toml` names the release and its table format. They are plain Parquet, SQLite,
+  JSON Lines and TSV, so reading them needs no package.
 - **The `ontometer-corpus` package**, which loads the tables, derives them from the raw
   ontology files, and regenerates the figures and numbers of the paper that describes the
   corpus.

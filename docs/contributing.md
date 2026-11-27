@@ -65,7 +65,18 @@ does and does not reproduce.
 
 Two kinds of tag share this repository:
 
-- **package releases**: a GitHub Release whose tag is `v` followed by `version` in
-  `pyproject.toml`; the publish workflow uploads it to PyPI and refuses a tag that does not
-  match. Record the change under `[Unreleased]` in `CHANGELOG.md` with your pull request.
-- **table releases**: `corpus-YYYY-MM` tags, archived on Zenodo; they publish nothing to PyPI.
+- **package releases**: a pushed tag `v` followed by `version` in `pyproject.toml`
+  (semantic versioning). The publish workflow uploads it to PyPI and refuses a tag that does
+  not match. Push the tag alone, with no GitHub Release: every GitHub Release becomes a
+  version of the dataset on Zenodo. Record the change under `[Unreleased]` in `CHANGELOG.md`
+  with your pull request.
+- **table releases**: `corpus-YYYY-MM` after the month of the crawl, `corpus-YYYY-MM.N` for a
+  later derivation of the same crawl. `data/release.toml` names the release and the table
+  format, and is committed before the tag. A GitHub Release on the tag archives it on Zenodo;
+  nothing goes to PyPI.
+
+The table format is a number in `ontometer_corpus.release.TABLES_FORMAT`. Bump it, and the
+`format` in `data/release.toml`, whenever a table, column or meaning changes in a way an older
+reader would misread; the loaders refuse any other format. A format change is a major version
+of the package (a minor one while it is 0.x), and `CHANGELOG.md` names the format each package
+release reads.

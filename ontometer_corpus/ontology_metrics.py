@@ -41,6 +41,7 @@ import pandas as pd
 from ontometer_corpus.namespaces import reference_kind
 from ontometer_corpus.network.construction import load_network
 from ontometer_corpus.paths import CorpusPaths
+from ontometer_corpus.release import require_readable
 from ontometer_corpus.role_names import SKOS_DOMINATED_KINDS
 
 #: Display name per metric column, for tables and figures.
@@ -409,7 +410,12 @@ def structural_population(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_ontology_metrics(paths: CorpusPaths) -> pd.DataFrame:
-    """Read ``ontology_metrics.parquet`` (written by ``ontometer-corpus ontology-metrics``)."""
+    """Read ``ontology_metrics.parquet`` (written by ``ontometer-corpus ontology-metrics``).
+
+    Raises:
+        ReleaseError: the corpus directory holds tables of another format.
+    """
+    require_readable(paths.corpus_dir)
     path = paths.ontology_metrics_path
     if not path.exists():
         raise FileNotFoundError(f"{path} is missing: run ontometer-corpus ontology-metrics")

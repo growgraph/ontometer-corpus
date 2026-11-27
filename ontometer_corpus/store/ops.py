@@ -18,6 +18,7 @@ from pathlib import Path, PurePosixPath
 from suthing import file_hash
 
 from ontometer_corpus.paths import CorpusPaths
+from ontometer_corpus.release import release_at_tag
 from ontometer_corpus.store.index import (
     HASH_LEN,
     IndexMissingAtRev,
@@ -258,8 +259,10 @@ def tag(paths: CorpusPaths, remote: Remote, name: str) -> None:
     """Tag the remote with *name* once it holds every object git tag *name* indexes.
 
     Raises:
+        ReleaseError: the tag's ``release.toml`` is missing or names another release.
         StoreError: the remote lacks or disagrees on some object.
     """
+    release_at_tag(paths.corpus_dir, name)
     entries = index_at_rev(paths.corpus_dir, name)
     result = status(paths, remote, entries)
     if result.remote_missing or result.remote_bad:

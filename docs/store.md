@@ -56,9 +56,10 @@ With `ONTOMETER_STORE_REMOTE` set to the private working remote:
    object first; a corrupt one is named and skipped. Then `status` shows the remote holds every
    listed object. Objects go up **before** the change to `corpus/` that references them enters
    version control.
-5. For a version a paper or release uses, tag it `corpus-YYYY-MM` in git and run
+5. For a version a paper or release uses, name it in `data/release.toml` (`corpus-YYYY-MM` for a
+   new crawl, `corpus-YYYY-MM.N` for a re-derivation of one), commit, tag it in git and run
    `ontometer-corpus store tag corpus-YYYY-MM`, which refuses until the remote holds the whole version
-   with the right sizes and hashes.
+   with the right sizes and hashes, and refuses a tag whose `release.toml` names another release.
 
 `corpus.db` is binary and cannot be combined line by line, so one person fetches per refresh.
 Objects from parallel fetches combine on their own; `manifest.jsonl` is the text record to

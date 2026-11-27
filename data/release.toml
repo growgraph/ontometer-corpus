@@ -1,0 +1,4 @@
+# The table release this directory holds; read by the table loaders and `store tag`/`publish`.
+release = "corpus-2026-08.1"
+crawl = "2026-08"
+format = 1

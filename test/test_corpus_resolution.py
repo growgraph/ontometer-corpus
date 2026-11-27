@@ -27,6 +27,8 @@ from ontometer_corpus.pipeline.parse import (
     extract_metadata,
 )
 
+from .test_release import write_release
+
 FOAF = "http://xmlns.com/foaf/0.1/"
 EX = "https://example.org/vocab#"
 
@@ -276,6 +278,7 @@ def test_usage_edges_carry_term_evidence_when_measured(tmp_path):
     assert (dc["n_logical_terms"], dc["n_annotation_terms"]) == (0, 4)
 
     save_network(G, tmp_path)
+    write_release(tmp_path, "corpus-2026-01")
     loaded = load_network(tmp_path)
     assert loaded["https://example.org/user"][FOAF]["usage"]["n_logical_terms"] == 3
 
@@ -444,6 +447,7 @@ def test_import_with_unique_stem_stays_external(tmp_path):
     assert edges[0][2]["reference_iris"] == ["https://imports.example.org/modules/unique.owl"]
 
     save_network(graph, tmp_path)
+    write_release(tmp_path, "corpus-2026-01")
     loaded = load_network(tmp_path)
     assert list(loaded.out_edges("https://example.org/user", data=True)) == edges
 

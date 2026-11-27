@@ -43,6 +43,7 @@ from ontometer_corpus.dating import time_pairs
 from ontometer_corpus.metrics.abstractness import dag_closure
 from ontometer_corpus.network.hyperbolic import DEFAULT_R_MAX, primary_parents, radial_angles
 from ontometer_corpus.paths import CorpusPaths
+from ontometer_corpus.release import require_readable
 
 EPOCH = pd.Timestamp("1970-01-01")
 YEAR = 365.25
@@ -140,7 +141,11 @@ def load_tracked(paths: CorpusPaths) -> TimedNetwork:
 
     Returns:
         The network placed in time, as :func:`assemble` returns it.
+
+    Raises:
+        ReleaseError: the corpus directory holds tables of another format.
     """
+    require_readable(paths.corpus_dir)
     onto = pd.read_parquet(paths.ontology_abstractness_path)
     dates = pd.read_parquet(paths.ontology_dates_path)
     dep = pd.read_parquet(paths.ontology_specialisations_path)

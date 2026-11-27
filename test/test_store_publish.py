@@ -17,6 +17,7 @@ from ontometer_corpus.store.ops import StoreError
 from ontometer_corpus.store.publish import fetch_withheld, publish
 from ontometer_corpus.store.remote import DirRemote
 
+from .test_release import write_release
 from .test_store_licence import _corpus
 
 CC_BY = "http://creativecommons.org/licenses/by/4.0/"
@@ -53,8 +54,11 @@ def _write_policy(path: Path, policy: Policy) -> None:
 
 
 def _git_tag(repo: Path, name: str) -> None:
+    """Commit ``data/`` as release *name* and tag it."""
     git = ["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@e"]
-    subprocess.run([*git, "init", "-q"], check=True)
+    if not (repo / ".git").exists():
+        subprocess.run([*git, "init", "-q"], check=True)
+    write_release(repo / "data", name)
     subprocess.run([*git, "add", "data"], check=True)
     subprocess.run([*git, "commit", "-qm", "data"], check=True)
     subprocess.run([*git, "tag", name], check=True)
@@ -62,24 +66,24 @@ def _git_tag(repo: Path, name: str) -> None:
 
 def test_publish_never_uploads_withheld(tmp_path):
     paths = _mixed(tmp_path)
-    _git_tag(tmp_path, "corpus-t")
+    _git_tag(tmp_path, "corpus-2026-01")
     remote = DirRemote(tmp_path / "public")
 
-    report = publish(paths, remote, "corpus-t", POLICY)
+    report = publish(paths, remote, "corpus-2026-01", POLICY)
 
     uploaded = {Path(p).name[:64] for p in remote.list("objects/")}
     assert uploaded == {hashlib.sha256(b"open").hexdigest()}
     assert len(report.withheld) == 2
-    assert "corpus-t" in remote.tags()
+    assert "corpus-2026-01" in remote.tags()
 
 
 def test_index_lists_withheld_with_url(tmp_path):
     paths = _mixed(tmp_path)
-    _git_tag(tmp_path, "corpus-t")
+    _git_tag(tmp_path, "corpus-2026-01")
     remote = DirRemote(tmp_path / "public")
-    publish(paths, remote, "corpus-t", POLICY)
+    publish(paths, remote, "corpus-2026-01", POLICY)
 
-    index = pd.read_parquet(tmp_path / "public" / "releases/corpus-t/index/objects.parquet")
+    index = pd.read_parquet(tmp_path / "public" / "releases/corpus-2026-01/index/objects.parquet")
     assert len(index) == 3
     withheld = index[~index.redistributed]
     assert set(withheld.canonical_url.str.startswith("https://example.org/")) == {True}
@@ -100,30 +104,29 @@ def test_index_lists_withheld_with_url(tmp_path):
 
 def test_card_yaml_parses_and_points_at_index(tmp_path):
     paths = _mixed(tmp_path)
-    _git_tag(tmp_path, "corpus-t")
+    _git_tag(tmp_path, "corpus-2026-01")
     remote = DirRemote(tmp_path / "public")
-    publish(paths, remote, "corpus-t", POLICY)
+    publish(paths, remote, "corpus-2026-01", POLICY)
 
     card = (tmp_path / "public" / "README.md").read_text()
     header = yaml.safe_load(card.split("---")[1])
     (config,) = header["configs"]
-    assert config["data_files"] == "releases/corpus-t/index/objects.parquet"
+    assert config["data_files"] == "releases/corpus-2026-01/index/objects.parquet"
     assert header["license"] == "other"
-    assert (tmp_path / "public" / "releases/corpus-t/tables/objects.tsv").exists()
+    assert (tmp_path / "public" / "releases/corpus-2026-01/tables/objects.tsv").exists()
 
 
 def test_republishing_a_later_tag_keeps_earlier_release(tmp_path):
     paths = _mixed(tmp_path)
-    _git_tag(tmp_path, "corpus-a")
+    _git_tag(tmp_path, "corpus-2026-01")
     remote = DirRemote(tmp_path / "public")
-    publish(paths, remote, "corpus-a", POLICY)
-    git = ["git", "-C", str(tmp_path), "-c", "user.name=t", "-c", "user.email=t@e"]
-    subprocess.run([*git, "tag", "corpus-b"], check=True)
-    publish(paths, remote, "corpus-b", POLICY)
+    publish(paths, remote, "corpus-2026-01", POLICY)
+    _git_tag(tmp_path, "corpus-2026-01.1")
+    publish(paths, remote, "corpus-2026-01.1", POLICY)
 
     header = yaml.safe_load((tmp_path / "public" / "README.md").read_text().split("---")[1])
     names = [c["config_name"] for c in header["configs"]]
-    assert names == ["corpus-b", "corpus-a"]
+    assert names == ["corpus-2026-01.1", "corpus-2026-01"]
     assert header["configs"][0].get("default") is True
 
 
@@ -158,32 +161,32 @@ def test_fetch_withheld_keeps_only_hash_matches(tmp_path):
 
 def test_publish_uses_the_policy_recorded_at_the_tag(tmp_path):
     paths = _mixed(tmp_path)
-    _git_tag(tmp_path, "corpus-t")
+    _git_tag(tmp_path, "corpus-2026-01")
     loosened = Policy(
         default="redistribute", unrecognised="redistribute", redistribute=("*",), withhold=()
     )
     _write_policy(paths.corpus_dir / "redistribution.yaml", loosened)
     remote = DirRemote(tmp_path / "public")
 
-    report = publish(paths, remote, "corpus-t")
+    report = publish(paths, remote, "corpus-2026-01")
 
     assert len(report.uploaded) == 1
 
 
 def test_publish_refuses_a_policy_other_than_the_tagged_one(tmp_path):
     paths = _mixed(tmp_path)
-    _git_tag(tmp_path, "corpus-t")
+    _git_tag(tmp_path, "corpus-2026-01")
     loosened = Policy(
         default="redistribute", unrecognised="redistribute", redistribute=("*",), withhold=()
     )
     with pytest.raises(StoreError):
-        publish(paths, DirRemote(tmp_path / "public"), "corpus-t", loosened)
+        publish(paths, DirRemote(tmp_path / "public"), "corpus-2026-01", loosened)
 
 
 def test_card_installs_the_package_and_clones_the_index(tmp_path):
     paths = _mixed(tmp_path)
-    _git_tag(tmp_path, "corpus-t")
-    publish(paths, DirRemote(tmp_path / "public"), "corpus-t")
+    _git_tag(tmp_path, "corpus-2026-01")
+    publish(paths, DirRemote(tmp_path / "public"), "corpus-2026-01")
     card = (tmp_path / "public" / "README.md").read_text()
     assert 'pip install "ontometer-corpus[store]"' in card
     assert "git clone" in card
@@ -191,8 +194,8 @@ def test_card_installs_the_package_and_clones_the_index(tmp_path):
 
 def test_card_clones_the_corpus_repository_that_holds_the_index(tmp_path):
     paths = _mixed(tmp_path)
-    _git_tag(tmp_path, "corpus-t")
-    publish(paths, DirRemote(tmp_path / "public"), "corpus-t")
+    _git_tag(tmp_path, "corpus-2026-01")
+    publish(paths, DirRemote(tmp_path / "public"), "corpus-2026-01")
     card = (tmp_path / "public" / "README.md").read_text()
     assert "git clone https://github.com/growgraph/ontometer-corpus ontometer-corpus" in card
     assert "export ONTOMETER_CORPUS=$PWD/ontometer-corpus/data" in card

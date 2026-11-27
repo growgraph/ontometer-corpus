@@ -25,6 +25,7 @@ from ontometer_corpus.store.ops import (
 )
 from ontometer_corpus.store.remote import DirRemote, RemoteFile, open_remote
 
+from .test_release import write_release
 from .test_store_index import make_corpus
 
 
@@ -45,7 +46,9 @@ def _commit_index(tmp_path: Path, paths: CorpusPaths, tag_name: str | None = Non
     if not (tmp_path / ".git").exists():
         _git(tmp_path, "init", "-q")
     write_index(build_index(paths), paths.objects_index_path)
-    _git(tmp_path, "add", "data/objects.tsv")
+    if tag_name:
+        write_release(paths.corpus_dir, tag_name)
+    _git(tmp_path, "add", "data")
     _git(tmp_path, "commit", "-qm", "index")
     if tag_name:
         _git(tmp_path, "tag", tag_name)

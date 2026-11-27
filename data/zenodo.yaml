@@ -31,6 +31,6 @@ related_identifiers:
   - identifier: https://huggingface.co/datasets/growgraph/ontometer-corpus
     relation: isIdenticalTo
     resource_type: dataset
-  - identifier: https://github.com/growgraph/OntoMeter
+  - identifier: https://github.com/growgraph/ontometer-corpus
     relation: isSupplementedBy
     resource_type: software

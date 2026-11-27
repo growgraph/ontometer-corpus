@@ -22,6 +22,7 @@ import pandas as pd
 import yaml
 
 from ontometer_corpus.paths import CorpusPaths
+from ontometer_corpus.release import RELEASE_FILE, release_at_tag
 from ontometer_corpus.store.index import ObjectEntry, index_at_rev, local_objects
 from ontometer_corpus.store.licence import Policy, Verdict, load_policy, verdicts
 from ontometer_corpus.store.ops import StoreError, move_into_place, push
@@ -29,7 +30,13 @@ from ontometer_corpus.store.remote import Remote
 from ontometer_corpus.versions import family_key
 
 #: Tracked files a release carries beside the index, besides every Parquet table.
-_RELEASE_FILES = ("corpus.db", "objects.tsv", "manifest.jsonl", "redistribution.yaml")
+_RELEASE_FILES = (
+    "corpus.db",
+    "objects.tsv",
+    "manifest.jsonl",
+    "redistribution.yaml",
+    RELEASE_FILE,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -212,9 +219,11 @@ def publish(
     The policy is the one recorded at *rev*; a different *policy* is refused.
 
     Raises:
+        ReleaseError: the tag's ``release.toml`` is missing or names another release.
         StoreError: a redistributable object is missing locally or corrupt, or the
             policy does not match the revision's.
     """
+    release_at_tag(paths.corpus_dir, rev)
     entries = index_at_rev(paths.corpus_dir, rev)
     with tempfile.TemporaryDirectory() as tmp:
         at_rev = data_at_rev(paths, rev, Path(tmp) / "data")

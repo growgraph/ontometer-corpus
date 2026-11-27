@@ -66,6 +66,7 @@ import networkx as nx
 from ontometer_corpus.namespaces import reference_kind
 from ontometer_corpus.paths import CorpusPaths, corpus_paths
 from ontometer_corpus.registries import home_registry_sql
+from ontometer_corpus.release import require_readable
 from ontometer_corpus.role_names import SKOS_CONCEPT_ROLE
 
 
@@ -533,10 +534,15 @@ def save_network(
 
 
 def load_network(paths: CorpusPaths | Path | str | None = None) -> nx.MultiDiGraph:
-    """Rebuild the graph written by :func:`save_network`."""
+    """Rebuild the graph written by :func:`save_network`.
+
+    Raises:
+        ReleaseError: the corpus directory holds tables of another format.
+    """
     import pandas as pd
 
     paths = _as_paths(paths)
+    require_readable(paths.corpus_dir)
     nodes = pd.read_parquet(paths.network_nodes_path)
     edges = pd.read_parquet(paths.network_edges_path)
 

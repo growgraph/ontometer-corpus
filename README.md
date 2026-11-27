@@ -315,13 +315,15 @@ exactly what was captured, and when.
 
 ## Versions, citing, licence
 
-A corpus version is a commit of this repository; table releases are `corpus-YYYY-MM` tags, archived on
-Zenodo: [10.5281/zenodo.24404202](https://doi.org/10.5281/zenodo.24404202) resolves to the
+A corpus version is a commit of this repository; table releases are `corpus-YYYY-MM` tags (the month
+of the crawl; `.N` marks a later derivation of the same crawl), named with their table format in
+`data/release.toml`, and archived on Zenodo: [10.5281/zenodo.24404202](https://doi.org/10.5281/zenodo.24404202) resolves to the
 latest release, and each release has its own DOI (`corpus-2026-08`:
 [10.5281/zenodo.24404203](https://doi.org/10.5281/zenodo.24404203)). `corpus-2026-08.1` is the
 same crawl with revised deduplication. Name the
 commit or tag when you report results, and the `ontometer-corpus` version that read it. Package
-releases are tagged `vX.Y.Z` and listed in [CHANGELOG.md](CHANGELOG.md).
+releases are tagged `vX.Y.Z` and listed in [CHANGELOG.md](CHANGELOG.md), with the table format each
+reads; the loaders refuse tables of another format.
 
 Authors: Alexander Belikov (GrowGraph) and David Bareham (CESDIP, CY Cergy Paris Université).
 
